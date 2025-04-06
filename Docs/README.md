@@ -1,5 +1,5 @@
 # Docs
-Aqui deve ficará a documentação técnica e de gestão do projeto.
+Nesta pasta, ficará a documentação técnica e de gestão do projeto.
 ---
 Incluir:
 - Diagramas UML
