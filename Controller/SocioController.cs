@@ -1,22 +1,28 @@
-public class SocioController
+using GestorGinasio.Model;
+using GestorGinasio.View;
+
+namespace GestorGinasio.Controller
 {
-    private readonly Socio socio;
-    private readonly SocioView view;
-
-    public SocioController(Socio socio, SocioView view)
+    public class SocioController
     {
-        this.socio = socio;
-        this.view = view;
-        socio.DadosAtualizados += OnDadosAtualizados;
-    }
+        private readonly Socio socio;
+        private readonly SocioView view;
 
-    public void AtualizarSocio(string nome, string email)
-    {
-        socio.AtualizarDados(nome, email);
-    }
+        public SocioController(Socio socio, SocioView view)
+        {
+            this.socio = socio;
+            this.view = view;
+            //socio.DadosAtualizados += OnDadosAtualizados;
+        }
 
-    private void OnDadosAtualizados(object sender, EventArgs e)
-    {
-        view.MostrarDadosSocio(socio);
+        //public void AtualizarSocio(string nome, string email)
+        //{
+        //    socio.AtualizarDados(nome, email);
+        //}
+
+        private void OnDadosAtualizados(object sender, EventArgs e)
+        {
+            SocioView.MostrarDadosSocio(socio);
+        }
     }
 }

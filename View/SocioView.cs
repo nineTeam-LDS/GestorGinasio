@@ -1,9 +1,13 @@
+using GestorGinasio.Model;
 using System;
 
-public class SocioView
+namespace GestorGinasio.View
 {
-    public void MostrarDadosSocio(Socio socio)
+    public class SocioView
     {
-        Console.WriteLine($"ID: {socio.Id}, Nome: {socio.Nome}, Email: {socio.Email}");
+        public static void MostrarDadosSocio(Socio socio)
+        {
+            Console.WriteLine($"ID: {socio.Id}, Nome: {socio.Nome}, Email: {socio.Email}");
+        }
     }
 }
