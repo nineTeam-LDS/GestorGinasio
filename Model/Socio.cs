@@ -1,16 +1,9 @@
-using System;
-
-public class Socio
+namespace GestorGinasio.Model
 {
-    public event EventHandler DadosAtualizados;
-    public int Id { get; set; }
-    public string Nome { get; set; }
-    public string Email { get; set; }
-
-    public void AtualizarDados(string nome, string email)
+    public class Socio
     {
-        Nome = nome;
-        Email = email;
-        DadosAtualizados?.Invoke(this, EventArgs.Empty);
+        public int Id { get; set; }
+        public string Nome { get; set; }
+        public string Email { get; set; }
     }
 }
