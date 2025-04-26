@@ -1,66 +1,75 @@
-﻿using System;
-using System.Threading;
-using GestorGinasio.Model.Services;
+﻿using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.View.Terminal
 {
-    public class UtilizadoresView
+    public static class GerirUtilizadoresView
     {
-        private readonly string _user, _role;
-        private readonly AuthService _auth;
-
-        public UtilizadoresView(string username, string role, AuthService authService)
+        // ---- LISTAR ----------------------------------------------------
+        public static void MostrarLista(IEnumerable<User> lista)
         {
-            _user = username;
-            _role = role;
-            _auth = authService;
+            Console.Clear();
+            Console.WriteLine("=== UTILIZADORES ===");
+
+            foreach (var u in lista)
+                Console.WriteLine($"{u.Id,3}  {u.Username,-15}  ({u.Role})");
+
+            Console.WriteLine("\n<Enter> para voltar …");
+            Console.ReadLine();
         }
 
-        public void Exibir()
+        // ---- ADICIONAR -------------------------------------------------
+        public static User PedirNovoUtilizador()
         {
-            if (_role != "Admin")
-            {
-                Console.WriteLine("Acesso negado.");
-                Thread.Sleep(1500);
-                return;
-            }
+            Console.Clear();
+            Console.WriteLine("=== NOVO UTILIZADOR ===");
+            Console.Write("Username : "); var user = Console.ReadLine()!;
+            Console.Write("Password : "); var pass = Console.ReadLine()!;
+            Console.Write("Role     : "); var role = Console.ReadLine()!;
 
-            while (true)
-            {
-                Console.Clear();
-                DrawHeader();
-                Console.WriteLine();
-                Console.WriteLine("=== UTILIZADORES ===");
-                Console.WriteLine("1. Criar Novo Utilizador");
-                Console.WriteLine("2. Listar Utilizadores");
-                Console.WriteLine("3. Remover Utilizador");
-                Console.WriteLine("4. Voltar");
-                Console.Write("Opção (1-4): ");
-
-                var op = Console.ReadLine();
-                if (op == "4") break;
-                if (op == "2")
-                {
-                    foreach (var u in _auth.ListarUsuarios())
-                        Console.WriteLine($"{u.Username} - {u.Role}");
-                    Console.ReadKey();
-                }
-                else
-                {
-                    // implementar criacão / remoção
-                }
-            }
+            return new User { Username = user, Password = pass, Role = role };
         }
 
-        private void DrawHeader()
+        // ---- REMOVER ---------------------------------------------------
+        public static int PedirIdParaRemover()
         {
-            int w = Console.WindowWidth;
-            Console.WriteLine(new string('=', w));
-            Console.Write(DateTime.Now.ToString("dddd HH:mm:ss"));
-            string usr = "Administrador: " + _user;
-            Console.SetCursorPosition(w - usr.Length, Console.CursorTop);
-            Console.WriteLine(usr);
-            Console.WriteLine(new string('=', w));
+            Console.Write("\nId a remover: ");
+            return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
+        }
+
+        // ---- EDITAR --------------------------------------------------------
+        public static int PedirIdParaEditar()
+        {
+            Console.Write("\nId a editar: ");
+            return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
+        }
+
+        public static User PedirDadosEditados(User original)
+        {
+            Console.Clear();
+            Console.WriteLine("=== EDITAR UTILIZADOR ===");
+            Console.WriteLine($"(Enter = manter o valor actual)\n");
+
+            Console.Write($"Username [{original.Username}]: ");
+            var user = Console.ReadLine();
+            Console.Write($"Password [{new string('*', original.Password.Length)}]: ");
+            var pass = Console.ReadLine();
+            Console.Write($"Role [{original.Role}]: ");
+            var role = Console.ReadLine();
+
+            return new User
+            {
+                Id = original.Id,
+                Username = string.IsNullOrWhiteSpace(user) ? original.Username : user,
+                Password = string.IsNullOrWhiteSpace(pass) ? original.Password : pass,
+                Role = string.IsNullOrWhiteSpace(role) ? original.Role : role
+            };
+        }
+
+        // Confirmação genérica ----------------------------------------------
+        public static bool Confirmar(string mensagem)
+        {
+            Console.Write($"{mensagem} (S/N) ");
+            return Console.ReadKey(true).Key == ConsoleKey.S;
         }
     }
 }

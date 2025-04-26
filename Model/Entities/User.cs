@@ -2,9 +2,10 @@
 {
     public class User
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
+        public int Id { get; set; }       //  ← acrescentado
+        public string Username { get; set; } = null!;
+        public string Password { get; set; } = null!;
+        public string Role { get; set; } = null!;
     }
 }
 

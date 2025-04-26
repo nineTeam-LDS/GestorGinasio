@@ -8,7 +8,7 @@ namespace GestorGinasio.View.Terminal
         public User SolicitarCredenciais()
         {
             Console.WriteLine("=== LOGIN ===");
-            Console.Write("Usuário: ");
+            Console.Write("Utilizador: ");
             var username = Console.ReadLine();
             Console.Write("Senha: ");
             var password = ReadPassword();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using GestorGinasio.Controller;
 using GestorGinasio.Model.Entities;
 using GestorGinasio.Model.Services;
 using GestorGinasio.View.Terminal;
@@ -12,36 +13,35 @@ namespace GestorGinasio
         {
             while (true)
             {
-                Console.Title = "nineTeam - Gestão de Ginásio";
-                Console.WriteLine("Bem‑vindo à Gestão de Ginásio da nineTeam");
-                Console.WriteLine();
-
                 var loginView = new LoginView();
                 var authService = new AuthService();
+
                 var user = loginView.SolicitarCredenciais();
-                var ok = authService.ValidarCredenciais(user);
+                bool ok = authService.ValidarCredenciais(user);
                 loginView.MostrarResultadoLogin(ok);
 
-                if (!ok) break;
+                if (!ok)
+                {
+                    Console.WriteLine("Prima Enter para tentar novamente…");
+                    Console.ReadLine();
+                    continue;           // em vez de break
+                }
 
+                // --- só entra aqui se o login for bem-sucedido ---
                 Console.WriteLine("A iniciar aplicação...");
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 Console.Clear();
 
-                var menu = new MenuPrincipal
-                {
-                    ActiveUsername = user.Username,
-                    ActiveUserRole = user.Role,
-                    AuthService = authService
-                };
-                menu.ExibirMenu();
+                var menuCtrl = new MenuPrincipalController();
+                menuCtrl.MostrarMenu(user.Username, user.Role, authService);
 
                 Console.Write("Trocar de utilizador? (S/N) ");
-                if (!Console.ReadLine().Trim().Equals("S", StringComparison.OrdinalIgnoreCase))
+                if (!Console.ReadLine()!.Trim()
+                        .Equals("S", StringComparison.OrdinalIgnoreCase))
                     break;
             }
 
-            Console.WriteLine("Aplicação encerrada. Pressione Enter para sair.");
+            Console.WriteLine("Aplicação encerrada. Enter para sair.");
             Console.ReadKey();
         }
     }

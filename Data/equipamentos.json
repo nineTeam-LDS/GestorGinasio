@@ -1,0 +1,16 @@
+[
+  {
+    "Id": 2,
+    "Nome": "halteres",
+    "Instrutor": "jose",
+    "Horario": "12:00-14:00",
+    "Quantidade": 2
+  },
+  {
+    "Id": 3,
+    "Nome": "passadeira",
+    "Instrutor": "ana",
+    "Horario": "10:00-12:00",
+    "Quantidade": 4
+  }
+]

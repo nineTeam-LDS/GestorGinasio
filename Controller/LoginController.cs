@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using GestorGinasio.Controller;
 using GestorGinasio.View.Terminal;
 using GestorGinasio.Model.Entities;
 using GestorGinasio.Model.Services;
@@ -20,10 +21,10 @@ namespace GestorGinasio.Controller
         public void RealizarLogin()
         {
             // Obtém o utilizador a partir do fluxo de login.
-            User usuario = _loginView.SolicitarCredenciais();
+            User utilizador = _loginView.SolicitarCredenciais();
 
             // Valida as credenciais utilizando o objeto 'usuario'
-            bool valido = _authService.ValidarCredenciais(usuario);
+            bool valido = _authService.ValidarCredenciais(utilizador);
 
             // Mostra o resultado do login
             _loginView.MostrarResultadoLogin(valido);
@@ -35,8 +36,8 @@ namespace GestorGinasio.Controller
                 Console.Clear();    // limpa o console
 
                 // Instancia e exibe o menu principal
-                var menu = new MenuPrincipal();
-                menu.ExibirMenu();
+                var menuCtrl = new MenuPrincipalController();
+                menuCtrl.MostrarMenu(utilizador.Username, utilizador.Role, _authService);
             }
         }
     }

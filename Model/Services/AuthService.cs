@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GestorGinasio.Model.Entities;
+using GestorGinasio.Model.Repositories;
 using Newtonsoft.Json;
 
 namespace GestorGinasio.Model.Services
@@ -60,7 +61,7 @@ namespace GestorGinasio.Model.Services
             return true;
         }
 
-        public List<User> ListarUsuarios() => Users;
+        public List<User> ListarUtilizadores() => Users;
 
         public bool RemoverUsuario(string username)
         {

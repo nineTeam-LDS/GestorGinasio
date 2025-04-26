@@ -1,5 +1,6 @@
 using System.IO;
 using Newtonsoft.Json;
+using GestorGinasio.Model.Repositories;
 
 namespace GestorGinasio.Model.Services
 {

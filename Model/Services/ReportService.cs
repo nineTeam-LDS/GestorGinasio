@@ -1,97 +1,99 @@
-﻿// File: Services/ReportService.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
+using GestorGinasio.Model.Entities;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.Model.Services
 {
     public static class ReportService
     {
-        static ReportService()
-        {
-            // Habilita code page 1252 para PdfSharp
+        // -----------  Preparação global  -----------
+        static ReportService() =>
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-        }
 
-        private static readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        private static readonly string logoPath = Path.Combine(baseDir, "logo.png");
+        private static readonly string _baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly string _logoPath = Path.Combine(_baseDir, "View", "Assets", "logo.jpg");
 
-        public static void GenerateSociosReport(List<Socio> list, string username)
+
+        // -----------  Facades públicos  -----------
+        public static void GerarSocios(IEnumerable<Socio> lista, string user) =>
+            GerarPdfInterno(
+                "Relatório de Sócios",
+                lista.Select(s => $"{s.Id,3}  {s.Nome,-20}  {s.Email,-25} {s.DataInscricao:yyyy-MM-dd}"),
+                Path.Combine(_baseDir, "Relatorios", $"Socios_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"),
+                user);
+
+        public static void GerarAulas(IEnumerable<Aula> lista, string user) =>
+            GerarPdfInterno(
+                "Relatório de Aulas",
+                lista.Select(a => $"{a.Id,3}  {a.Nome,-15}  {a.Instrutor,-15}  {a.Sala,3}  {a.Horario}"),
+                Path.Combine(_baseDir, "Relatorios", $"Aulas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"),
+                user);
+
+        public static void GerarEquip(IEnumerable<Equipamento> lista, string user) =>
+            GerarPdfInterno(
+                "Relatório de Equipamentos",
+                lista.Select(e => $"{e.Id,3}  {e.Nome,-20}  Qtd: {e.Quantidade,3}"),
+                Path.Combine(_baseDir, "Relatorios", $"Equip_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"),
+                user);
+
+
+        // -----------  Motor interno  -----------
+        private static void GerarPdfInterno(string titulo,
+                                            IEnumerable<string> linhas,
+                                            string ficheiro,
+                                            string utilizador)
         {
-            string dateTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            string userText = $"Utilizador: {username}";
-            var lines = list.ConvertAll(s => $"{s.Id}: {s.Nome} - {s.Email}");
-            var file = Path.Combine(baseDir, "Relatorios", $"Socios_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
-            GeneratePdf("Relatório de Sócios", dateTime, userText, lines, file);
-        }
+            Directory.CreateDirectory(Path.GetDirectoryName(ficheiro)!);
 
-        public static void GenerateAulasReport(List<Aula> list, string username)
-        {
-            string dateTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            string userText = $"Utilizador: {username}";
-            var lines = list.ConvertAll(a => $"{a.Id}: {a.Nome} - {a.Instrutor} às {a.Horario}");
-            var file = Path.Combine(baseDir, "Relatorios", $"Aulas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
-            GeneratePdf("Relatório de Aulas", dateTime, userText, lines, file);
-        }
-
-        public static void GenerateEquipamentosReport(List<Equipamento> list, string username)
-        {
-            string dateTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            string userText = $"Utilizador: {username}";
-            var lines = list.ConvertAll(e => $"{e.Id}: {e.Nome} (Qtd: {e.Quantidade})");
-            var file = Path.Combine(baseDir, "Relatorios", $"Equipamentos_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
-            GeneratePdf("Relatório de Equipamentos", dateTime, userText, lines, file);
-        }
-
-        private static void GeneratePdf(string title, string dateTime, string userText, List<string> lines, string file)
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(file)!);
-
-            using var doc = new PdfDocument();
-            doc.Info.Title = title;
+            using var doc = new PdfDocument { Info = { Title = titulo } };
             var page = doc.AddPage();
             var gfx = XGraphics.FromPdfPage(page);
-
             double y = 20;
-            // Desenha logo se existir
-            if (File.Exists(logoPath))
+
+            //-- Logo
+            if (File.Exists(_logoPath))
             {
-                var img = XImage.FromFile(logoPath);
-                double imgWidth = 100;
-                double imgHeight = img.PixelHeight * imgWidth / img.PixelWidth;
-                gfx.DrawImage(img, 40, y, imgWidth, imgHeight);
-                y += imgHeight + 10;
+                using var img = XImage.FromFile(_logoPath);
+                const double largura = 100;
+                double altura = img.PixelHeight * largura / img.PixelWidth;
+                gfx.DrawImage(img, 40, y, largura, altura);
+                y += altura + 10;
             }
 
-            // Título
-            var fontTitle = new XFont("Verdana", 16, XFontStyle.Bold);
-            gfx.DrawString(title, fontTitle, XBrushes.Black,
-                new XRect(40, y, page.Width - 80, 30), XStringFormats.TopCenter);
+            //-- Título
+            var fTitulo = new XFont("Verdana", 16, XFontStyle.Bold);
+            gfx.DrawString(titulo, fTitulo, XBrushes.Black,
+                           new XRect(40, y, page.Width - 80, 30),
+                           XStringFormats.TopCenter);
             y += 40;
 
-            // Data/Hora e Utilizador
-            var fontMeta = new XFont("Verdana", 10, XFontStyle.Regular);
-            gfx.DrawString(dateTime, fontMeta, XBrushes.Black, new XPoint(40, y));
-            double userWidth = gfx.MeasureString(userText, fontMeta).Width;
-            gfx.DrawString(userText, fontMeta, XBrushes.Black,
-                new XPoint(page.Width - 40 - userWidth, y));
+            //-- Meta-dados (data e utilizador)
+            var fMeta = new XFont("Verdana", 10);
+            string dataHora = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            gfx.DrawString(dataHora, fMeta, XBrushes.Black, new XPoint(40, y));
+
+            string userText = $"Utilizador: {utilizador}";
+            double wUser = gfx.MeasureString(userText, fMeta).Width;
+            gfx.DrawString(userText, fMeta, XBrushes.Black,
+                           new XPoint(page.Width - 40 - wUser, y));
             y += 20;
 
-            // Linha separadora
             gfx.DrawLine(XPens.Black, 40, y, page.Width - 40, y);
             y += 20;
 
-            // Conteúdo
-            var fontText = new XFont("Verdana", 12, XFontStyle.Regular);
-            foreach (var line in lines)
+            //-- Corpo
+            var fTexto = new XFont("Verdana", 12);
+            foreach (string linha in linhas)
             {
-                gfx.DrawString(line, fontText, XBrushes.Black, new XPoint(40, y));
+                gfx.DrawString(linha, fTexto, XBrushes.Black, new XPoint(40, y));
                 y += 20;
+
                 if (y > page.Height - 40)
                 {
                     page = doc.AddPage();
@@ -100,9 +102,10 @@ namespace GestorGinasio.Model.Services
                 }
             }
 
-            doc.Save(file);
-            Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
-            Console.WriteLine($"Relatório gerado: {file}");
+            doc.Save(ficheiro);
+            Process.Start(new ProcessStartInfo(ficheiro) { UseShellExecute = true });
+            Console.WriteLine($"\nRelatório gerado em: {ficheiro}");
         }
     }
 }
+

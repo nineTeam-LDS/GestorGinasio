@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
-using GestorGinasio.Model.Entities;
+﻿using GestorGinasio.Model.Entities;
+using GestorGinasio.Model.Repositories;
 
 namespace GestorGinasio.Model.Services
 {
     public class SocioService
     {
-        private readonly string _path =
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "socios.json");
+        private readonly JsonRepository<Socio> _repo = new JsonRepository<Socio>("socios.json");
 
-        public List<Socio> GetAll()
-        {
-            if (!File.Exists(_path))
-                return new List<Socio>();
-            var json = File.ReadAllText(_path);
-            return JsonConvert.DeserializeObject<List<Socio>>(json)
-                   ?? new List<Socio>();
-        }
+        public List<Socio> GetAll() => _repo.GetAll();              // ---- LISTAR ----
+        public void Add(Socio s) => _repo.Add(s);                   // ---- CRIAR ----
+        public void Update(Socio s) => _repo.Update(s, x => x.Id);  // ---- EDITAR ----
+        public void Delete(int id) => _repo.Delete(id, x => x.Id);  // ---- REMOVER ----
     }
 }
