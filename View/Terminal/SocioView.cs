@@ -1,7 +1,8 @@
-using GestorGinasio.Model;
 using System;
+using GestorGinasio.Model.Services;
+using GestorGinasio.Model.Entities;
 
-namespace GestorGinasio.View
+namespace GestorGinasio.View.Terminal
 {
     public class SocioView
     {

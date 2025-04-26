@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using GestorGinasio.Model;
-using GestorGinasio.Services;
-using GestorGinasio.View;
+using GestorGinasio.Model.Entities;
+using GestorGinasio.Model.Services;
+using GestorGinasio.View.Terminal;
 
 namespace GestorGinasio
 {

@@ -1,0 +1,117 @@
+@startuml
+'=============================================================================
+' Gestão de Ginásio - MVC com arquitetura Krasner & Pope e gestão de erros .Json
+'=============================================================================
+
+actor "Administrador" as Admin
+actor "Sistema" as Sys
+
+box "View" #LightBlue
+    boundary "LoginView" as loginV
+    boundary "MenuPrincipal" as menuV
+    boundary "SocioView" as socioV
+    boundary "AulaView" as aulaV
+end box
+
+box "Controller" #LightGreen
+    control "LoginController" as loginC
+    control "SocioController" as socioC
+    control "AulaController" as aulaC
+end box
+
+box "Model" #Yellow
+    entity "AuthService" as Auth
+    entity "JsonService" as Json
+    entity "PdfService" as Pdf
+    entity "Socio (Entity)" as socioM
+    entity "Aula (Entity)" as aulaM
+    entity "Inscricao (Entity)" as inscrM
+end box
+
+title Fluxo Global – Gestão de Ginásio (MVC com arquitetura Krasner & Pope)
+
+'=========================== INÍCIO =============================
+
+' 1) Início da aplicação
+Admin -> loginC : [1] Iniciar aplicação
+loginC -> Auth   : [2] Inicializar AuthService
+loginC -> loginV : [3] Exibir ecrã de login
+
+' 2) Login
+Admin -> loginV : [4] Introduzir credenciais
+loginV -> loginC : [5] Enviar credenciais
+loginC -> Auth   : [6] autenticar(username, password)
+Auth --> loginC  : [7] Resultado (Sucesso ou Insucesso)
+loginC -> loginV : [8] Mostrar resultado do login
+
+' 3) Menu Principal
+loop Enquanto utilizador não sair
+    loginC -> menuV : [9] Exibir opções no MenuPrincipal
+    Admin -> menuV : [10] Escolhe opção
+    menuV -> loginC : [11] Notificar escolha ao Controller
+
+    alt Escolheu "Gerir Sócios"
+        loginC -> socioC : [12] Iniciar gestão de Sócios
+        socioC -> socioV : [13] Apresentar SocioView
+        Admin -> socioV : [14] Introduzir dados de novo sócio
+        socioV -> socioC : [15] Submeter dados
+        socioC -> socioM : [16] Criar objeto Socio
+        socioC -> Json   : [17] Tentar guardar sócio no ficheiro JSON
+
+        alt Gravação bem-sucedida
+            Json --> socioC : Sucesso
+            socioC -> socioV : [19] Exibir mensagem "Sócio adicionado com sucesso!"
+        else Insucesso lógico (ex: sócio já existente)
+            Json --> socioC : Insucesso
+            socioC -> socioV : [19a] Exibir mensagem "Sócio já existe. Operação cancelada."
+        else Erro grave (IOException, etc.)
+            Json -> socioC : throw IOException
+            socioC -> socioV : [19b] Exibir mensagem "Erro ao guardar sócio. Tente novamente."
+        end
+
+        socioV -> menuV : [20] Voltar ao Menu
+
+    else Escolheu "Gerir Aulas"
+        loginC -> aulaC : [12] Iniciar gestão de Aulas
+        aulaC -> aulaV : [13] Apresentar AulaView
+        Admin -> aulaV : [14] Introduzir dados da aula
+        aulaV -> aulaC : [15] Submeter dados
+        aulaC -> aulaM : [16] Criar objeto Aula
+        aulaC -> Json  : [17] Tentar guardar aula no ficheiro JSON
+
+        alt Gravação bem-sucedida
+            Json --> aulaC : Sucesso
+            aulaC -> aulaV : [19] Exibir mensagem "Aula adicionada com sucesso!"
+        else Insucesso lógico (ex: conflito de horário)
+            Json --> aulaC : Insucesso
+            aulaC -> aulaV : [19a] Exibir mensagem "Conflito de horário. Operação cancelada."
+        else Erro grave (IOException, etc.)
+            Json -> aulaC : throw IOException
+            aulaC -> aulaV : [19b] Exibir mensagem "Erro ao guardar aula. Tente novamente."
+        end
+
+        aulaV -> menuV : [20] Voltar ao Menu
+
+    else Escolheu "Relatórios"
+        loginC -> Json : [12] Pedir dados de Sócios/Aulas
+        Json --> loginC : [13] Dados lidos
+        loginC -> Pdf  : [14] Gerar PDF
+        Pdf --> loginC : [15] PDF gerado
+        loginC -> menuV : [16] Exibir sucesso
+
+    else Escolheu "Sair"
+        break
+    end
+end
+
+' 4) Ações automáticas do Sistema
+Sys -> loginC : [21] Verificar tarefas agendadas
+loginC -> menuV : [22] Notificar alertas
+
+' 5) Encerramento da aplicação
+Admin -> menuV : [23] Selecionar "Sair"
+menuV -> loginC : [24] Pedir encerramento
+loginC -> Json  : [25] Salvar estado final
+loginC -> menuV : [26] Encerrar interface
+
+@enduml

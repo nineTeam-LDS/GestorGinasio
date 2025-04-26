@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using GestorGinasio.Model;
+using GestorGinasio.Model.Entities;
 
-namespace GestorGinasio.Services
+namespace GestorGinasio.Model.Services
 {
     public class EquipamentoService
     {

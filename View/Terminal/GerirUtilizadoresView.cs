@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using GestorGinasio.Services;
+using GestorGinasio.Model.Services;
 
-namespace GestorGinasio.View
+namespace GestorGinasio.View.Terminal
 {
     public class UtilizadoresView
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using GestorGinasio.Model;     // Certifique-se de incluir este using para acessar a classe User
-using GestorGinasio.View;
-using GestorGinasio.Services;
+using GestorGinasio.View.Terminal;
+using GestorGinasio.Model.Entities;
+using GestorGinasio.Model.Services;
 
 namespace GestorGinasio.Controller
 {

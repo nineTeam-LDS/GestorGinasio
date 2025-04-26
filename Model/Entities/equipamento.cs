@@ -1,4 +1,4 @@
-﻿namespace GestorGinasio.Model
+﻿namespace GestorGinasio.Model.Entities
 {
     public class Equipamento
     {

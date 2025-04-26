@@ -1,5 +1,6 @@
-using GestorGinasio.Model;
-using GestorGinasio.View;
+using GestorGinasio.View.Terminal;
+using GestorGinasio.Model.Entities;
+using GestorGinasio.Model.Services;
 
 namespace GestorGinasio.Controller
 {

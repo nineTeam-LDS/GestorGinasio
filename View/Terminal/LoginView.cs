@@ -1,7 +1,7 @@
 ﻿using System;
-using GestorGinasio.Model;
+using GestorGinasio.Model.Entities;
 
-namespace GestorGinasio.View
+namespace GestorGinasio.View.Terminal
 {
     public class LoginView
     {

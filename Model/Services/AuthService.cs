@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GestorGinasio.Model;
+using GestorGinasio.Model.Entities;
 using Newtonsoft.Json;
 
-namespace GestorGinasio.Services
+namespace GestorGinasio.Model.Services
 {
     public class AuthService
     {

@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Text;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
-using GestorGinasio.Model;
+using GestorGinasio.Model.Entities;
 
-namespace GestorGinasio.Services
+namespace GestorGinasio.Model.Services
 {
     public static class ReportService
     {

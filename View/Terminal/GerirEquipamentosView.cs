@@ -1,7 +1,7 @@
 ﻿using System;
-using GestorGinasio.Services;
+using GestorGinasio.Model.Services;
 
-namespace GestorGinasio.View
+namespace GestorGinasio.View.Terminal
 {
     public class EquipamentosView
     {
