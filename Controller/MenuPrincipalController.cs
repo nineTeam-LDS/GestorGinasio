@@ -29,7 +29,7 @@ namespace GestorGinasio.Controller
                     case ConsoleKey.D4:                         // 4. Utilizadores
                         _users.Gerir();
                         break;
-                    case ConsoleKey.D5:             // 5. Relatórios
+                    case ConsoleKey.D5:                         // 5. Relatórios
                         new ReportController(activeUser).Gerir();
                         break;
                     case ConsoleKey.D0:

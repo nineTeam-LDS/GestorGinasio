@@ -9,7 +9,7 @@ namespace GestorGinasio.View.Terminal
         public static void MostrarLista(IEnumerable<Socio> lista)
         {
             Console.Clear();
-            Console.WriteLine("=== SÓCIOS ===\n");
+            Console.WriteLine("\n===== SÓCIOS =====\n");
             Console.WriteLine("{0,-4} {1,-20} {2,-25} {3}",
                               "Id", "Nome", "Email", "Data Inscrição");
 
@@ -24,7 +24,7 @@ namespace GestorGinasio.View.Terminal
         public static Socio PedirNovoSocio()
         {
             Console.Clear();
-            Console.WriteLine("=== NOVO SÓCIO ===");
+            Console.WriteLine("\n===== NOVO SÓCIO =====\n");
             Console.Write("Nome:  "); var n = Console.ReadLine()!;
             Console.Write("Email: "); var e = Console.ReadLine()!;
 
@@ -41,7 +41,7 @@ namespace GestorGinasio.View.Terminal
         public static Socio PedirDadosEditados(Socio o)
         {
             Console.Clear();
-            Console.WriteLine("=== EDITAR SÓCIO === (Enter = manter)");
+            Console.WriteLine("\n===== EDITAR SÓCIO === (Enter = manter) ===\n");
             Console.Write($"Nome  [{o.Nome}]: "); var n = Console.ReadLine();
             Console.Write($"Email [{o.Email}]: "); var e = Console.ReadLine();
 

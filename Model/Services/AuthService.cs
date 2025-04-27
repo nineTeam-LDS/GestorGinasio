@@ -1,47 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GestorGinasio.Model.Entities;
 using GestorGinasio.Model.Repositories;
-using Newtonsoft.Json;
 
 namespace GestorGinasio.Model.Services
 {
     public class AuthService
     {
-        public List<User> Users { get; private set; }
-        private string filePath;
+        private readonly JsonRepository<User> _repo;
 
-        public AuthService()
+        public AuthService(string filePath = "users.json")
         {
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            filePath = Path.Combine(basePath, "Data", "users.json");
+            _repo = new JsonRepository<User>(filePath);
 
-            if (File.Exists(filePath))
+            // Se não houver utilizadores, cria o admin
+            if (!_repo.GetAll().Any())
             {
-                var content = File.ReadAllText(filePath);
-                Users = string.IsNullOrWhiteSpace(content)
-                    ? new List<User>()
-                    : JsonConvert.DeserializeObject<List<User>>(content);
-            }
-            else
-            {
-                Users = new List<User>();
-            }
-
-            if (Users.Count == 0)
-            {
-                Users.Add(new User { Username = "admin", Password = "admin", Role = "Admin" });
-                SaveUsers();
+                _repo.Add(new User { Username = "admin", Password = "admin", Role = "Admin" });
             }
         }
 
         public bool ValidarCredenciais(User user)
         {
-            var u = Users.FirstOrDefault(x =>
-                x.Username.Equals(user.Username, StringComparison.OrdinalIgnoreCase) &&
+            var u = _repo.GetAll().FirstOrDefault(x =>
+                x.Username.Equals(user.Username, System.StringComparison.OrdinalIgnoreCase) &&
                 x.Password == user.Password);
+
             if (u != null)
             {
                 user.Role = string.IsNullOrWhiteSpace(u.Role) ? "Socio" : u.Role;
@@ -52,31 +36,24 @@ namespace GestorGinasio.Model.Services
 
         public bool CriarNovoUsuario(User novo)
         {
-            if (Users.Any(u => u.Username.Equals(novo.Username, StringComparison.OrdinalIgnoreCase)))
+            if (_repo.GetAll().Any(u => u.Username.Equals(novo.Username, System.StringComparison.OrdinalIgnoreCase)))
                 return false;
-            novo.Role = novo.Role.Trim().Equals("admin", StringComparison.OrdinalIgnoreCase)
-                ? "Admin" : "Socio";
-            Users.Add(novo);
-            SaveUsers();
+
+            novo.Role = novo.Role.Trim().Equals("admin", System.StringComparison.OrdinalIgnoreCase) ? "Admin" : "Socio";
+            _repo.Add(novo);
             return true;
         }
 
-        public List<User> ListarUtilizadores() => Users;
+        public List<User> ListarUtilizadores() => _repo.GetAll();
 
         public bool RemoverUsuario(string username)
         {
-            var u = Users.FirstOrDefault(x =>
-                x.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
-            if (u == null) return false;
-            Users.Remove(u);
-            SaveUsers();
-            return true;
-        }
+            var user = _repo.GetAll().FirstOrDefault(u => u.Username.Equals(username, System.StringComparison.OrdinalIgnoreCase));
+            if (user == null)
+                return false;
 
-        private void SaveUsers()
-        {
-            var json = JsonConvert.SerializeObject(Users, Formatting.Indented);
-            File.WriteAllText(filePath, json);
+            _repo.Delete(user.Id, x => x.Id);
+            return true;
         }
     }
 }

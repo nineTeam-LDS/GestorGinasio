@@ -10,7 +10,7 @@ namespace GestorGinasio.View.Terminal
         public static ConsoleKey MenuRelatorios()
         {
             Console.Clear();
-            Console.WriteLine("=== RELATÓRIOS ===");
+            Console.WriteLine("\n===== RELATÓRIOS =====\n");
             Console.WriteLine("1. Sócios");
             Console.WriteLine("2. Aulas");
             Console.WriteLine("3. Equipamentos");

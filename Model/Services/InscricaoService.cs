@@ -9,8 +9,11 @@ namespace GestorGinasio.Model.Services
 {
     public class InscricaoService
     {
-        private readonly JsonRepository<Inscricao> _repo =
-            new("inscricoes.json");
+        private readonly JsonRepository<Inscricao> _repo;
+        public InscricaoService(string filePath = "inscricoes.json")
+        {
+            _repo = new JsonRepository<Inscricao>(filePath);
+        }
 
         public List<Inscricao> GetAll() => _repo.GetAll();
         public void Add(Inscricao i) => _repo.Add(i);

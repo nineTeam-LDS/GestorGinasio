@@ -10,7 +10,7 @@ namespace GestorGinasio.View.Terminal
         public static void MostrarLista(IEnumerable<Aula> lista)
         {
             Console.Clear();
-            Console.WriteLine("=== AULAS ===");
+            Console.WriteLine("\n===== AULAS =====\n");
             Console.WriteLine($"{"Id",-3} {"Nome",-15} {"Instrutor",-12} {"Sala",-6} Horário");
             foreach (var a in lista)
                 Console.WriteLine($"{a.Id,-3} {a.Nome,-15} {a.Instrutor,-12} {a.Sala,-6} {a.Horario}");
@@ -21,7 +21,7 @@ namespace GestorGinasio.View.Terminal
         public static Aula PedirNovaAula()
         {
             Console.Clear();
-            Console.WriteLine("=== NOVA AULA ===");
+            Console.WriteLine("\n===== NOVA AULA =====\n");
             Console.Write("Nome: "); var n = Console.ReadLine()!;
             Console.Write("Instrutor: "); var i = Console.ReadLine()!;
             Console.Write("Sala: "); var s = Console.ReadLine()!;
@@ -35,7 +35,7 @@ namespace GestorGinasio.View.Terminal
         public static Aula PedirDadosEditados(Aula o)
         {
             Console.Clear();
-            Console.WriteLine("=== EDITAR AULA === (Enter = manter)");
+            Console.WriteLine("\n===== EDITAR AULA === (Enter = manter) ===\n");
             Console.Write($"Nome [{o.Nome}]: "); var n = Console.ReadLine()!;
             Console.Write($"Instrutor [{o.Instrutor}]: "); var i = Console.ReadLine()!;
             Console.Write($"Sala [{o.Sala}]: "); var s = Console.ReadLine()!;

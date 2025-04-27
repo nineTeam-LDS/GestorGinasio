@@ -13,7 +13,7 @@ namespace GestorGinasio.Controller
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("=== EQUIPAMENTOS ===");
+                Console.WriteLine("\n===== EQUIPAMENTOS =====\n");
                 Console.WriteLine("1. Listar");
                 Console.WriteLine("2. Adicionar");
                 Console.WriteLine("3. Editar");

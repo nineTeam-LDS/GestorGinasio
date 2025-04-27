@@ -12,7 +12,7 @@ namespace GestorGinasio.View.Terminal
         public static void MostrarLista(IEnumerable<Equipamento> lista)
         {
             Console.Clear();
-            Console.WriteLine("=== EQUIPAMENTOS ===\n");
+            Console.WriteLine("\n===== EQUIPAMENTOS =====\n");
             Console.WriteLine("{0,-4} {1,-20} {2,-12} {3,-12} {4}",
                               "Id", "Equipamento", "Quantidade", "Instrutor", "Horario");
 
@@ -29,7 +29,7 @@ namespace GestorGinasio.View.Terminal
         public static Equipamento PedirNovoEquipamento()
         {
             Console.Clear();
-            Console.WriteLine("=== NOVO EQUIPAMENTO ===");
+            Console.WriteLine("\n===== NOVO EQUIPAMENTO =====\n");
 
             Console.Write("Equipamento: "); var nome = Console.ReadLine()!; 
             Console.Write("Quantidade: "); int qtd = int.TryParse(Console.ReadLine(), out var q) ? q : 1;
@@ -63,7 +63,7 @@ namespace GestorGinasio.View.Terminal
         public static Equipamento PedirDadosEditados(Equipamento orig)
         {
             Console.Clear();
-            Console.WriteLine("=== EDITAR EQUIPAMENTO ===");
+            Console.WriteLine("\\===== EDITAR EQUIPAMENTO =====");
             Console.WriteLine("(Enter = manter o valor actual)\n");
 
             Console.Write($"Equipamento [{orig.Nome}]: "); var n = Console.ReadLine();

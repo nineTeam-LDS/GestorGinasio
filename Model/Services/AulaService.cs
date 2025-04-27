@@ -5,12 +5,17 @@ namespace GestorGinasio.Model.Services
 {
     public class AulaService
     {
-        private readonly JsonRepository<Aula> _rep = new("aulas.json");
+        private readonly JsonRepository<Aula> _repo;
 
-        public List<Aula> GetAll() => _rep.GetAll();
-        public void Add(Aula a) => _rep.Add(a);        // gera Id no repositório
-        public void Update(Aula a) => _rep.Update(a, x => x.Id);
-        public void Delete(int id) => _rep.Delete(id, x => x.Id);
+        public AulaService(string filePath = "aulas.json")
+        {
+            _repo = new JsonRepository<Aula>(filePath);
+        }
+
+        public List<Aula> GetAll() => _repo.GetAll();               // ---- LISTAR ----
+        public void Add(Aula a) => _repo.Add(a);                    // ---- CRIAR ----
+        public void Update(Aula a) => _repo.Update(a, x => x.Id);   // ---- EDITAR ----
+        public void Delete(int id) => _repo.Delete(id, x => x.Id);  // ---- REMOVER ----
     }
 }
 

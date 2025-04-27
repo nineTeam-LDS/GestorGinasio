@@ -22,5 +22,11 @@
     "Username": "ana",
     "Password": "2222",
     "Role": "Prof"
+  },
+  {
+    "Id": 5,
+    "Username": "suzuky",
+    "Password": "0000",
+    "Role": "Prof"
   }
 ]

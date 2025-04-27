@@ -8,7 +8,7 @@ namespace GestorGinasio.View.Terminal
         public static void MostrarLista(IEnumerable<User> lista)
         {
             Console.Clear();
-            Console.WriteLine("=== UTILIZADORES ===");
+            Console.WriteLine("\n===== UTILIZADORES =====\n");
 
             foreach (var u in lista)
                 Console.WriteLine($"{u.Id,3}  {u.Username,-15}  ({u.Role})");
@@ -21,7 +21,7 @@ namespace GestorGinasio.View.Terminal
         public static User PedirNovoUtilizador()
         {
             Console.Clear();
-            Console.WriteLine("=== NOVO UTILIZADOR ===");
+            Console.WriteLine("\n===== NOVO UTILIZADOR =====\n");
             Console.Write("Username : "); var user = Console.ReadLine()!;
             Console.Write("Password : "); var pass = Console.ReadLine()!;
             Console.Write("Role     : "); var role = Console.ReadLine()!;
@@ -46,7 +46,7 @@ namespace GestorGinasio.View.Terminal
         public static User PedirDadosEditados(User original)
         {
             Console.Clear();
-            Console.WriteLine("=== EDITAR UTILIZADOR ===");
+            Console.WriteLine("\n===== EDITAR UTILIZADOR =====");
             Console.WriteLine($"(Enter = manter o valor actual)\n");
 
             Console.Write($"Username [{original.Username}]: ");

@@ -14,7 +14,7 @@ namespace GestorGinasio.Controller
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("=== UTILIZADORES ===");
+                Console.WriteLine("\n===== UTILIZADORES =====\n");
                 Console.WriteLine("1. Listar");
                 Console.WriteLine("2. Adicionar");
                 Console.WriteLine("3. Editar");

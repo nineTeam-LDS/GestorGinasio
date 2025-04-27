@@ -5,7 +5,12 @@ namespace GestorGinasio.Model.Services
 {
     public class UserService
     {
-        private readonly JsonRepository<User> _repo = new("users.json");
+        private readonly JsonRepository<User> _repo;
+
+        public UserService(string filePath = "users.json")
+        {
+            _repo = new JsonRepository<User>(filePath);
+        }
 
         public List<User> GetAll() => _repo.GetAll();               // ---- LISTAR ----
         public void Add(User u) => _repo.Add(u);                    // ---- CRIAR ----

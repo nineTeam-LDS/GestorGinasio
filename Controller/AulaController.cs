@@ -12,7 +12,7 @@ namespace GestorGinasio.Controller
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("=== AULAS ===");
+                Console.WriteLine("\n===== AULAS =====\n");
                 Console.WriteLine("1. Listar");
                 Console.WriteLine("2. Criar");
                 Console.WriteLine("3. Editar");
