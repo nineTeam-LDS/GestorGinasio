@@ -1,57 +1,82 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.Model.Services
 {
-    public static class ReportService
+    public class ReportService : IReportService
     {
-        static ReportService() => Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        private readonly string _logoPath;
+        private readonly string _reportsDir;
 
-        private static readonly string _baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        private static readonly string _logoPath = Path.Combine(_baseDir, "View", "Assets", "logo.jpg");
+        public ReportService()
+        {
+            // necessário para PdfSharp no .NET Core
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            // baseDir → e.g. bin\Debug\net6.0
+            var baseDir = AppContext.BaseDirectory;
+
+            // pasta Relatorios existe
+            _reportsDir = Path.Combine(baseDir, "Relatorios");
+            Directory.CreateDirectory(_reportsDir);
+
+            // caminho para imagem logo
+            _logoPath = Path.Combine(baseDir, "View", "Assets", "logo.jpg");
+        }
 
         private const int LinhasPorPagina = 40;
-
         private const string FormatoSocio = "{0,5} {1,-20} {2,-30} {3}";
         private const string FormatoAula = "{0,5} {1,-20} {2,-20} {3,5} {4}";
         private const string FormatoEquip = "{0,5} {1,-25} {2,5} {3,-20} {4}";
 
-        public static void GerarSocios(IEnumerable<Socio> lista, string user)
+        public string GenerateSociosReport(IEnumerable<Socio> socios, string currentUser)
         {
             var linhas = new List<string>
             {
-                string.Format(FormatoSocio, "Id", "Nome", "Email", "Data Inscrição")
+                string.Format(FormatoSocio, "Id","Nome","Email","Data Inscrição")
             };
-            linhas.AddRange(lista.Select(s => string.Format(FormatoSocio, s.Id, s.Nome, s.Email, s.DataInscricao.ToString("yyyy-MM-dd"))));
+            linhas.AddRange(socios.Select(s =>
+                string.Format(FormatoSocio, s.Id, s.Nome, s.Email, s.DataInscricao.ToString("yyyy-MM-dd"))));
 
-            GerarPdfInterno("Relatório de Sócios", linhas, Path.Combine(_baseDir, "Relatorios", $"Socios_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"), user);
+            var output = Path.Combine(_reportsDir, "Relatorios", $"Socios_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            GerarPdf("Relatório de Sócios", linhas, output, currentUser);
+            return output;
         }
 
-        public static void GerarAulas(IEnumerable<Aula> lista, string user)
+        public string GenerateAulasReport(IEnumerable<Aula> aulas, string currentUser)
         {
             var linhas = new List<string>
             {
-                string.Format(FormatoAula, "Id", "Nome", "Instrutor", "Sala", "Horário")
+                string.Format(FormatoAula, "Id","Nome","Instrutor","Sala","Horário")
             };
-            linhas.AddRange(lista.Select(a => string.Format(FormatoAula, a.Id, a.Nome, a.Instrutor, a.Sala, a.Horario)));
+            linhas.AddRange(aulas.Select(a =>
+                string.Format(FormatoAula, a.Id, a.Nome, a.Instrutor, a.Sala, a.Horario)));
 
-            GerarPdfInterno("Relatório de Aulas", linhas, Path.Combine(_baseDir, "Relatorios", $"Aulas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"), user);
+            var output = Path.Combine(_reportsDir, "Relatorios", $"Aulas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            GerarPdf("Relatório de Aulas", linhas, output, currentUser);
+            return output;
         }
 
-        public static void GerarEquip(IEnumerable<Equipamento> lista, string user)
+        public string GenerateEquipamentosReport(IEnumerable<Equipamento> equipamentos, string currentUser)
         {
             var linhas = new List<string>
             {
-                string.Format(FormatoEquip, "Id", "Nome", "Qtd", "Instrutor", "Horário")
+                string.Format(FormatoEquip, "Id","Nome","Qtd","Instrutor","Horário")
             };
-            linhas.AddRange(lista.Select(e => string.Format(FormatoEquip, e.Id, e.Nome, e.Quantidade, e.Instrutor, e.Horario)));
+            linhas.AddRange(equipamentos.Select(e =>
+                string.Format(FormatoEquip, e.Id, e.Nome, e.Quantidade, e.Instrutor, e.Horario)));
 
-            GerarPdfInterno("Relatório de Equipamentos", linhas, Path.Combine(_baseDir, "Relatorios", $"Equip_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"), user);
+            var output = Path.Combine(_reportsDir, "Relatorios", $"Equipamentos_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            GerarPdf("Relatório de Equipamentos", linhas, output, currentUser);
+            return output;
         }
 
-        private static void GerarPdfInterno(string titulo, IEnumerable<string> linhas, string ficheiro, string utilizador)
+        private void GerarPdf(string titulo, IEnumerable<string> linhas, string ficheiro, string utilizador)
         {
             var doc = new PdfDocument();
             var page = doc.AddPage();

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Text;
 using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.View.Terminal
 {
-    public class LoginView
+    // Implementação concreta da interface de login no terminal.
+    public class LoginView : ILoginView
     {
         public User SolicitarCredenciais()
         {
@@ -18,7 +20,7 @@ namespace GestorGinasio.View.Terminal
 
         private string ReadPassword()
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             ConsoleKeyInfo key;
             do
             {

@@ -1,8 +1,11 @@
+using System;
+
 namespace GestorGinasio.View.Terminal
 {
-    public static class MenuPrincipalView
+    // Implementação concreta da View do Menu Principal no terminal.
+    public class MenuPrincipalView : IMenuPrincipalView
     {
-        public static void MostrarCabecalho(string user, string role)
+        public void MostrarCabecalho(string user, string role)
         {
             Console.Clear();
             Console.WriteLine(new string('=', 70));
@@ -11,7 +14,7 @@ namespace GestorGinasio.View.Terminal
             Console.WriteLine(new string('=', 70));
         }
 
-        public static ConsoleKey MostrarOpcoes()
+        public ConsoleKey MostrarOpcoes()
         {
             Console.WriteLine("\n===== MENU PRINCIPAL =====\n");
             Console.WriteLine("1. Sócios");

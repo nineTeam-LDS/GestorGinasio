@@ -3,16 +3,14 @@ using GestorGinasio.Model.Repositories;
 
 namespace GestorGinasio.Model.Services
 {
-    public class SocioService
+    public class SocioService : ISocioService
     {
-        private readonly JsonRepository<Socio> _repo;
+        private readonly IRepository<Socio> _repo;
 
-        public SocioService(string filePath = "socios.json")
-        {
-            _repo = new JsonRepository<Socio>(filePath);
-        }
+        public SocioService(IRepository<Socio> repo)
+          => _repo = repo ?? throw new ArgumentNullException(nameof(repo));
 
-        public List<Socio> GetAll() => _repo.GetAll();              // ---- LISTAR ----
+        public IEnumerable<Socio> GetAll() => _repo.GetAll();              // ---- LISTAR ----
         public void Add(Socio s) => _repo.Add(s);                   // ---- CRIAR ----
         public void Update(Socio s) => _repo.Update(s, x => x.Id);  // ---- EDITAR ----
         public void Delete(int id) => _repo.Delete(id, x => x.Id);  // ---- REMOVER ----

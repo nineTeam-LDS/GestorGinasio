@@ -1,46 +1,61 @@
-﻿using GestorGinasio.Model.Entities;
+﻿using System;
+using System.Linq;
 using GestorGinasio.Model.Services;
 using GestorGinasio.View.Terminal;
 
 namespace GestorGinasio.Controller
 {
-    internal class UserController
+    // Controller para gerir utilizadores, via DI de serviços e view.
+    public class UserController : IUserController
     {
-        private readonly UserService _svc = new();
+        private readonly IUserService _service;
+        private readonly IUserView _view;
 
-        /* MENU PRINCIPAL DOS UTILIZADORES */
+        public UserController(IUserService service, IUserView view)
+        {
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _view = view ?? throw new ArgumentNullException(nameof(view));
+        }
+
         public void Gerir()
         {
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("\n===== UTILIZADORES =====\n");
-                Console.WriteLine("1. Listar");
-                Console.WriteLine("2. Adicionar");
-                Console.WriteLine("3. Editar");
-                Console.WriteLine("4. Remover");
-                Console.WriteLine("0. Voltar");
-                Console.Write("Opção: ");
-
-                switch (Console.ReadKey(true).Key)
+                var key = _view.MostrarMenu();
+                switch (key)
                 {
-                    case ConsoleKey.D1:         // ---- LISTAR ----
-                        GerirUtilizadoresView.MostrarLista(_svc.GetAll());
+                    case ConsoleKey.D1:
+                        _view.MostrarLista(_service.GetAll());
                         break;
 
-                    case ConsoleKey.D2:         // ---- CRIAR ----
-                        var novo = GerirUtilizadoresView.PedirNovoUtilizador();
-                        novo.Id = _svc.GetAll().DefaultIfEmpty()
-                                       .Max(u => u?.Id ?? 0) + 1;
-                        _svc.Add(novo);
+                    case ConsoleKey.D2:
+                        var novo = _view.PedirNovoUtilizador();
+                        novo.Id = _service.GetAll().DefaultIfEmpty().Max(u => u?.Id ?? 0) + 1;
+                        _service.Add(novo);
+                        _view.Sucesso("Utilizador criado!");
                         break;
 
-                    case ConsoleKey.D3:         // ---- EDITAR ----
-                        EditarUtilizador();
+                    case ConsoleKey.D3:
+                        var idE = _view.PedirIdParaEditar();
+                        var orig = _service.GetAll().FirstOrDefault(u => u.Id == idE);
+                        if (orig == null)
+                        {
+                            _view.IdInexistente();
+                            break;
+                        }
+                        var edit = _view.PedirDadosEditados(orig);
+                        _service.Update(edit);
+                        _view.Sucesso("Utilizador atualizado!");
                         break;
 
-                    case ConsoleKey.D4:         // ---- REMOVER ----
-                        RemoverUtilizador();
+                    case ConsoleKey.D4:
+                        var idR = _view.PedirIdParaRemover();
+                        if (idR < 0) break;
+                        if (_view.Confirmar($"Confirma remover Id {idR}??"))
+                        {
+                            _service.Delete(idR);
+                            _view.Sucesso("Utilizador removido!");
+                        }
                         break;
 
                     case ConsoleKey.D0:
@@ -48,32 +63,6 @@ namespace GestorGinasio.Controller
                         return;
                 }
             }
-        }
-
-        // ---------- Métodos auxiliares -------------------------------
-        private void EditarUtilizador()
-        {
-            var id = GerirUtilizadoresView.PedirIdParaEditar();
-            var original = _svc.GetAll().FirstOrDefault(u => u.Id == id);
-
-            if (original is null)
-            {
-                Console.WriteLine("Id inexistente. <Enter>");
-                Console.ReadLine();
-                return;
-            }
-
-            var editado = GerirUtilizadoresView.PedirDadosEditados(original);
-            _svc.Update(editado);
-        }
-
-        private void RemoverUtilizador()
-        {
-            var id = GerirUtilizadoresView.PedirIdParaRemover();
-            if (id < 0) return;
-
-            if (GerirUtilizadoresView.Confirmar($"Confirma remover Id {id}?"))
-                _svc.Delete(id);
         }
     }
 }

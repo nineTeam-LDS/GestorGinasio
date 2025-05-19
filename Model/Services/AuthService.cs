@@ -5,13 +5,13 @@ using GestorGinasio.Model.Repositories;
 
 namespace GestorGinasio.Model.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
-        private readonly JsonRepository<User> _repo;
+        private readonly IRepository<User> _repo;
 
-        public AuthService(string filePath = "users.json")
+        public AuthService(IRepository<User> repo)
         {
-            _repo = new JsonRepository<User>(filePath);
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
 
             // Se não houver utilizadores, cria o admin
             if (!_repo.GetAll().Any())
@@ -34,7 +34,7 @@ namespace GestorGinasio.Model.Services
             return false;
         }
 
-        public bool CriarNovoUsuario(User novo)
+        public bool CriarNovoUser(User novo)                     // ---- CRIAR ----
         {
             if (_repo.GetAll().Any(u => u.Username.Equals(novo.Username, System.StringComparison.OrdinalIgnoreCase)))
                 return false;
@@ -44,9 +44,9 @@ namespace GestorGinasio.Model.Services
             return true;
         }
 
-        public List<User> ListarUtilizadores() => _repo.GetAll();
+        public IEnumerable<User> ListarUser() => _repo.GetAll();       // ---- LISTAR ----
 
-        public bool RemoverUsuario(string username)
+        public bool RemoverUser(string username)                // ---- REMOVER ----
         {
             var user = _repo.GetAll().FirstOrDefault(u => u.Username.Equals(username, System.StringComparison.OrdinalIgnoreCase));
             if (user == null)

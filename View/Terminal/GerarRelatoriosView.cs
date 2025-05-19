@@ -1,13 +1,12 @@
 ﻿// File: View/RelatoriosView.cs
 using System;
-using System.Threading;
-using GestorGinasio.Model.Services;
 
 namespace GestorGinasio.View.Terminal
 {
-    public static class GerarRelatoriosView
+    // Implementação de IReportView para o terminal.
+    public class GerarRelatoriosView : IReportView
     {
-        public static ConsoleKey MenuRelatorios()
+        public ConsoleKey MostrarMenu()
         {
             Console.Clear();
             Console.WriteLine("\n===== RELATÓRIOS =====\n");

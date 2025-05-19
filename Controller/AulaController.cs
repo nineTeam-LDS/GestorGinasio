@@ -1,66 +1,59 @@
 ﻿using GestorGinasio.Model.Entities;
+using GestorGinasio.Model.Exceptions;
 using GestorGinasio.Model.Services;
 using GestorGinasio.View.Terminal;
 
 namespace GestorGinasio.Controller
 {
-    internal class AulaController
+    public class AulaController : IAulaController
     {
-        private readonly AulaService _srv = new();
+        private readonly IAulaService _service;
+        private readonly IAulaView _view;
+
+        // DI-ready: recebe apenas a interface
+        public AulaController(IAulaService service, IAulaView view)
+        {
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _view = view ?? throw new ArgumentNullException(nameof(view));
+        }
+
         public void Gerir()
         {
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("\n===== AULAS =====\n");
-                Console.WriteLine("1. Listar");
-                Console.WriteLine("2. Criar");
-                Console.WriteLine("3. Editar");
-                Console.WriteLine("4. Remover");
-                Console.WriteLine("0. Voltar");
-                Console.Write("Opção: ");
-
-                switch (Console.ReadKey(true).Key)
+                var op = _view.MostrarMenu();
+                switch (op)
                 {
-                    case ConsoleKey.D1: Listar(); break;
-                    case ConsoleKey.D2: Criar(); break;
-                    case ConsoleKey.D3: Editar(); break;
-                    case ConsoleKey.D4: Remover(); break;
-                    case ConsoleKey.D0: return;
+                    case ConsoleKey.D1: _view.MostrarLista(_service.GetAll()); break;
+                    case ConsoleKey.D2:
+                        var nova = _view.PedirNovaAula();
+                        nova.Id = _service.GetAll().DefaultIfEmpty().Max(a => a?.Id ?? 0) + 1;
+                        _service.Add(nova);
+                        _view.Sucesso("Aula criada!");
+                        break;
+                    case ConsoleKey.D3:
+                        var idE = _view.PedirIdParaEditar();
+                        var ex = _service.GetAll().FirstOrDefault(a => a.Id == idE);
+                        if (ex == null) { _view.Aviso("Id não existe."); break; }
+                        var edit = _view.PedirDadosEditados(ex);
+                        _service.Update(edit);
+                        _view.Sucesso("Aula atualizada!");
+                        break;
+                    case ConsoleKey.D4:
+                        var idR = _view.PedirIdParaRemover();
+                        if (!_service.GetAll().Any(a => a.Id == idR))
+                        { _view.Aviso("Id não existe."); break; }
+                        if (_view.Confirmar("Remover definitivamente?"))
+                        {
+                            _service.Delete(idR);
+                            _view.Sucesso("Aula removida.");
+                        }
+                        break;
+                    case ConsoleKey.D0:
+                    case ConsoleKey.Escape:
+                        return;
                 }
             }
-        }
-
-        /* CRUD */
-        void Listar() => GerirAulasView.MostrarLista(_srv.GetAll());
-
-        void Criar()
-        {
-            var novo = GerirAulasView.PedirNovaAula();
-            novo.Id = _srv.GetAll().DefaultIfEmpty()
-                           .Max(u => u?.Id ?? 0) + 1;
-            _srv.Add(novo);
-            GerirAulasView.Sucesso("Aula criada!");
-        }
-
-        void Editar()
-        {
-            var id = GerirAulasView.PedirIdParaEditar();
-            var src = _srv.GetAll().FirstOrDefault(a => a.Id == id);
-            if (src == null) { GerirAulasView.IdInexistente(); return; }
-
-            var dst = GerirAulasView.PedirDadosEditados(src);
-            _srv.Update(dst);
-            GerirAulasView.Sucesso("Aula actualizada!");
-        }
-
-        void Remover()
-        {
-            var id = GerirAulasView.PedirIdParaRemover();
-            if (!_srv.GetAll().Any(a => a.Id == id)) { GerirAulasView.IdInexistente(); return; }
-
-            if (GerirAulasView.Confirmar("Remover definitivamente?"))
-            { _srv.Delete(id); GerirAulasView.Sucesso("Aula removida."); }
         }
     }
 }

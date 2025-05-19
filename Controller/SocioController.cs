@@ -1,77 +1,72 @@
-using GestorGinasio.Model.Entities;
+using System;
+using System.Linq;
+using GestorGinasio.Model.Exceptions;
 using GestorGinasio.Model.Services;
 using GestorGinasio.View.Terminal;
 
 namespace GestorGinasio.Controller
 {
-    internal class SocioController
+    public class SocioController : ISocioController
     {
-        private readonly SocioService _srv = new();
+        private readonly ISocioService _service;
+        private readonly ISociosView _view;
 
-        /* MENU PRINCIPAL DOS SÓCIOS */
+        public SocioController(ISocioService service, ISociosView view)
+        {
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _view = view ?? throw new ArgumentNullException(nameof(view));
+        }
+
         public void Gerir()
         {
-            while (true)
+            try
             {
-                Console.Clear();
-                Console.WriteLine("\n===== SÓCIOS =====\n");
-                Console.WriteLine("1. Listar");
-                Console.WriteLine("2. Criar");
-                Console.WriteLine("3. Editar");
-                Console.WriteLine("4. Remover");
-                Console.WriteLine("0. Voltar");
-                Console.Write("Opção: ");
-                var op = Console.ReadKey(true).Key;
-
-                switch (op)
+                while (true)
                 {
-                    case ConsoleKey.D1: Listar(); break;
-                    case ConsoleKey.D2: Criar(); break;
-                    case ConsoleKey.D3: Editar(); break;
-                    case ConsoleKey.D4: Remover(); break;
-                    case ConsoleKey.D0: return;
+                    var op = _view.MostrarMenu();
+                    switch (op)
+                    {
+                        case ConsoleKey.D1:
+                            _view.MostrarLista(_service.GetAll());
+                            break;
+                        case ConsoleKey.D2:
+                            var novo = _view.PedirNovoSocio();
+                            novo.Id = _service.GetAll().DefaultIfEmpty().Max(s => s?.Id ?? 0) + 1;
+                            _service.Add(novo);
+                            _view.Sucesso("Sócio criado!");
+                            break;
+                        case ConsoleKey.D3:
+                            var idE = _view.PedirIdParaEditar();
+                            var orig = _service.GetAll().FirstOrDefault(s => s.Id == idE);
+                            if (orig == null) { _view.IdInexistente(); break; }
+                            var edit = _view.PedirDadosEditados(orig);
+                            _service.Update(edit);
+                            _view.Sucesso("Sócio atualizado!");
+                            break;
+                        case ConsoleKey.D4:
+                            var idR = _view.PedirIdParaRemover();
+                            if (!_service.GetAll().Any(s => s.Id == idR))
+                            { _view.IdInexistente(); break; }
+                            if (_view.Confirmar("Remover definitivamente?"))
+                            {
+                                _service.Delete(idR);
+                                _view.Sucesso("Sócio removido.");
+                            }
+                            break;
+                        case ConsoleKey.D0:
+                        case ConsoleKey.Escape:
+                            return;
+                    }
                 }
             }
-        }
-
-        /* ---------- CRUD ----------- */
-
-        private void Listar()
-            => GerirSociosView.MostrarLista(_srv.GetAll());
-
-        private void Criar()
-        {
-            var novo = GerirSociosView.PedirNovoSocio();
-            novo.Id = _srv.GetAll().DefaultIfEmpty()
-                          .Max(u => u?.Id ?? 0) + 1;       // gera Id
-            _srv.Add(novo);
-
-            GerirSociosView.Sucesso("Sócio criado!");
-        }
-
-        private void Editar()
-        {
-            var id = GerirSociosView.PedirIdParaEditar();
-            var src = _srv.GetAll().FirstOrDefault(s => s.Id == id);
-
-            if (src == null) { GerirSociosView.IdInexistente(); return; }
-
-            var dst = GerirSociosView.PedirDadosEditados(src);
-            _srv.Update(dst);
-            GerirSociosView.Sucesso("Sócio actualizado!");
-        }
-
-        private void Remover()
-        {
-            var id = GerirSociosView.PedirIdParaRemover();
-            if (!_srv.GetAll().Any(s => s.Id == id)) { GerirSociosView.IdInexistente(); return; }
-
-            if (GerirSociosView.Confirmar("Remover definitivamente?"))
+            catch (JsonFileFormatException ex)
             {
-                _srv.Delete(id);
-                GerirSociosView.Sucesso("Sócio removido.");
+                Console.WriteLine("Erro ao carregar dados.");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Corrija o JSON e reinicie.");
+                Console.ReadKey();
+                Environment.Exit(1);
             }
         }
     }
-
 }

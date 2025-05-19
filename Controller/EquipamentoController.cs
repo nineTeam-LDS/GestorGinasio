@@ -1,72 +1,59 @@
-﻿using GestorGinasio.Model.Entities;
+﻿using System;
+using System.Linq;
 using GestorGinasio.Model.Services;
 using GestorGinasio.View.Terminal;
 
 namespace GestorGinasio.Controller
 {
-    internal class EquipamentoController
+    public class EquipamentoController : IEquipamentoController
     {
-        private readonly EquipamentoService _svc = new();
+        private readonly IEquipamentoService _service;
+        private readonly IEquipamentoView _view;
+
+        public EquipamentoController(IEquipamentoService service, IEquipamentoView view)
+        {
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _view = view ?? throw new ArgumentNullException(nameof(view));
+        }
 
         public void Gerir()
         {
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("\n===== EQUIPAMENTOS =====\n");
-                Console.WriteLine("1. Listar");
-                Console.WriteLine("2. Adicionar");
-                Console.WriteLine("3. Editar");
-                Console.WriteLine("4. Remover");
-                Console.WriteLine("0. Voltar");
-                Console.Write("Opção: ");
-
-                switch (Console.ReadKey(true).Key)
+                var key = _view.MostrarMenu();
+                switch (key)
                 {
                     case ConsoleKey.D1:
-                        GerirEquipamentosView.MostrarLista(_svc.GetAll());
+                        _view.MostrarLista(_service.GetAll());
                         break;
-
                     case ConsoleKey.D2:
-                        var novo = GerirEquipamentosView.PedirNovoEquipamento();
-                        novo.Id = _svc.GetAll().DefaultIfEmpty()
-                                      .Max(e => e?.Id ?? 0) + 1;
-                        _svc.Add(novo);
+                        var novo = _view.PedirNovoEquipamento();
+                        novo.Id = _service.GetAll().DefaultIfEmpty().Max(e => e?.Id ?? 0) + 1;
+                        _service.Add(novo);
+                        _view.Sucesso("Equipamento adicionado!");
                         break;
-
                     case ConsoleKey.D3:
-                        Editar();
+                        var idE = _view.PedirIdParaEditar();
+                        var orig = _service.GetAll().FirstOrDefault(e => e.Id == idE);
+                        if (orig == null) { _view.IdInexistente(); break; }
+                        var edit = _view.PedirDadosEditados(orig);
+                        _service.Update(edit);
+                        _view.Sucesso("Equipamento atualizado!");
                         break;
-
                     case ConsoleKey.D4:
-                        Remover();
+                        var idR = _view.PedirIdParaRemover();
+                        if (idR < 0) break;
+                        if (_view.Confirmar($"Remover equipamento {idR}?"))
+                        {
+                            _service.Delete(idR);
+                            _view.Sucesso("Equipamento removido!");
+                        }
                         break;
-
                     case ConsoleKey.D0:
                     case ConsoleKey.Escape:
                         return;
                 }
             }
-        }
-
-        // ---------- Auxiliares ----------
-        private void Editar()
-        {
-            var id = GerirEquipamentosView.PedirIdParaEditar();
-            var orig = _svc.GetAll().FirstOrDefault(e => e.Id == id);
-            if (orig == null) { GerirEquipamentosView.IdInexistente(); return; }
-
-            var edit = GerirEquipamentosView.PedirDadosEditados(orig);
-            _svc.Update(edit);
-        }
-
-        private void Remover()
-        {
-            var id = GerirEquipamentosView.PedirIdParaRemover();
-            if (id < 0) return;
-
-            if (GerirEquipamentosView.Confirmar($"Remover equipamento {id}?"))
-                _svc.Delete(id);
         }
     }
 }

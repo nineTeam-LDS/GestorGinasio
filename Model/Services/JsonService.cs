@@ -1,22 +1,42 @@
+using System;
 using System.IO;
 using Newtonsoft.Json;
-using GestorGinasio.Model.Repositories;
+using GestorGinasio.Model.Exceptions;
 
 namespace GestorGinasio.Model.Services
 {
-	public class JsonService
-	{
-		public static void Guardar<T>(string filePath, T obj)
-		{
-			var json = JsonConvert.SerializeObject(obj, Formatting.Indented);
-			File.WriteAllText(filePath, json);
-		}
+    public class JsonService : IJsonService
+    {
+        public T Load<T>(string path)
+        {
+            try
+            {
+                var json = File.ReadAllText(path);
+                return JsonConvert.DeserializeObject<T>(json)!;
+            }
+            catch (JsonException ex)
+            {
+                throw new JsonFileFormatException(path, ex);
+            }
+            catch (IOException ex)
+            {
+                // Pode registar em log
+                throw;
+            }
+        }
 
-		public static T Carregar<T>(string filePath)
-		{
-			if (!File.Exists(filePath)) return default;
-			var json = File.ReadAllText(filePath);
-			return JsonConvert.DeserializeObject<T>(json);
-		}
-	}
+        public void Save<T>(string path, T data)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+                File.WriteAllText(path, json);
+            }
+            catch (IOException ex)
+            {
+                // Pode registar em log
+                throw;
+            }
+        }
+    }
 }

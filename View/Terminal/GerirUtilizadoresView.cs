@@ -1,75 +1,110 @@
-﻿using GestorGinasio.Model.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.View.Terminal
 {
-    public static class GerirUtilizadoresView
+    // Implementação concreta da interface de Gestão de Utilizadores no terminal.
+    public class GerirUtilizadoresView : IUserView
     {
-        // ---- LISTAR ----------------------------------------------------
-        public static void MostrarLista(IEnumerable<User> lista)
+        public ConsoleKey MostrarMenu()
         {
             Console.Clear();
             Console.WriteLine("\n===== UTILIZADORES =====\n");
+            Console.WriteLine("1. Listar");
+            Console.WriteLine("2. Adicionar");
+            Console.WriteLine("3. Editar");
+            Console.WriteLine("4. Remover");
+            Console.WriteLine("0. Voltar");
+            Console.Write("Opção: ");
+            return Console.ReadKey(true).Key;
+        }
 
-            foreach (var u in lista)
-                Console.WriteLine($"{u.Id,3}  {u.Username,-15}  ({u.Role})");
-
+        // ---- LISTAR ----------------------------------------------------
+        public void MostrarLista(IEnumerable<User> usuarios)
+        {
+            Console.Clear();
+            Console.WriteLine("\n===== UTILIZADORES =====\n");
+            Console.WriteLine("Id   Username        Role");
+            foreach (var u in usuarios)
+                Console.WriteLine($"{u.Id,-3} {u.Username,-15} {u.Role}");
             Console.WriteLine("\n<Enter> para voltar …");
             Console.ReadLine();
         }
 
         // ---- ADICIONAR -------------------------------------------------
-        public static User PedirNovoUtilizador()
+        public User PedirNovoUtilizador()
         {
             Console.Clear();
             Console.WriteLine("\n===== NOVO UTILIZADOR =====\n");
-            Console.Write("Username : "); var user = Console.ReadLine()!;
-            Console.Write("Password : "); var pass = Console.ReadLine()!;
+            Console.Write("Username : "); var username = Console.ReadLine()!;
+            Console.Write("Password : "); var password = Console.ReadLine()!;
             Console.Write("Role     : "); var role = Console.ReadLine()!;
 
-            return new User { Username = user, Password = pass, Role = role };
+            return new User
+            {
+                Username = username,
+                Password = password,
+                Role = role
+            };
         }
 
         // ---- REMOVER ---------------------------------------------------
-        public static int PedirIdParaRemover()
+        public int PedirIdParaRemover()
         {
             Console.Write("\nId a remover: ");
             return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
         }
 
         // ---- EDITAR --------------------------------------------------------
-        public static int PedirIdParaEditar()
+        public int PedirIdParaEditar()
         {
             Console.Write("\nId a editar: ");
             return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
         }
 
-        public static User PedirDadosEditados(User original)
+        public User PedirDadosEditados(User existente)
         {
             Console.Clear();
             Console.WriteLine("\n===== EDITAR UTILIZADOR =====");
-            Console.WriteLine($"(Enter = manter o valor actual)\n");
+            Console.WriteLine("(Enter = manter o valor actual)\n");
 
-            Console.Write($"Username [{original.Username}]: ");
-            var user = Console.ReadLine();
-            Console.Write($"Password [{new string('*', original.Password.Length)}]: ");
-            var pass = Console.ReadLine();
-            Console.Write($"Role [{original.Role}]: ");
+            Console.Write($"Username [{existente.Username}]: ");
+            var username = Console.ReadLine();
+            Console.Write($"Password [{new string('*', existente.Password.Length)}]: ");
+            var password = Console.ReadLine();
+            Console.Write($"Role [{existente.Role}]: ");
             var role = Console.ReadLine();
 
             return new User
             {
-                Id = original.Id,
-                Username = string.IsNullOrWhiteSpace(user) ? original.Username : user,
-                Password = string.IsNullOrWhiteSpace(pass) ? original.Password : pass,
-                Role = string.IsNullOrWhiteSpace(role) ? original.Role : role
+                Id = existente.Id,
+                Username = string.IsNullOrWhiteSpace(username) ? existente.Username : username,
+                Password = string.IsNullOrWhiteSpace(password) ? existente.Password : password,
+                Role = string.IsNullOrWhiteSpace(role) ? existente.Role : role
             };
         }
 
         // Confirmação genérica ----------------------------------------------
-        public static bool Confirmar(string mensagem)
+        public bool Confirmar(string mensagem)
         {
             Console.Write($"{mensagem} (S/N) ");
             return Console.ReadKey(true).Key == ConsoleKey.S;
+        }
+
+        public void Sucesso(string mensagem)
+        {
+            Console.WriteLine(mensagem);
+            Console.WriteLine("<Enter> para continuar…");
+            Console.ReadLine();
+        }
+
+        public void IdInexistente()
+        {
+            Console.WriteLine("Id inexistente.");
+            Console.WriteLine("<Enter> para continuar…");
+            Console.ReadLine();
         }
     }
 }

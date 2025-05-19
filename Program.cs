@@ -2,7 +2,10 @@
 using System.Threading;
 using GestorGinasio.Controller;
 using GestorGinasio.Model.Entities;
+using GestorGinasio.Model.Repositories;
 using GestorGinasio.Model.Services;
+using Microsoft.Extensions.DependencyInjection; // Requer NuGet: Microsoft.Extensions.DependencyInjection
+using GestorGinasio.Model.Exceptions;
 using GestorGinasio.View.Terminal;
 
 namespace GestorGinasio
@@ -11,33 +14,56 @@ namespace GestorGinasio
     {
         static void Main()
         {
+            // Configuração de DI
+            var services = new ServiceCollection();
+
+            // JsonService para leitura/gravação genérica
+            services.AddSingleton<IJsonService, JsonService>();
+
+            // repositório genérico para *todas* as entidades
+            services.AddScoped(typeof(IRepository<>), typeof(JsonRepository<>));
+
+            // Serviços de domínio
+            services.AddTransient<ISocioService, SocioService>();
+            services.AddTransient<IAulaService, AulaService>();
+            services.AddTransient<IEquipamentoService, EquipamentoService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IInscricaoService, InscricaoService>();
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddSingleton<IReportService, ReportService>();
+
+            // ReportService
+            services.AddSingleton<IReportService, ReportService>();
+            //services.AddSingleton<IPdfRepository, PdfRepository>();
+            //services.AddTransient<IPdfService, PdfService>();
+
+            // Controllers
+            services.AddTransient<ILoginController, LoginController>();
+            services.AddTransient<IMenuPrincipalController, MenuPrincipalController>();
+            services.AddTransient<IUserController, UserController>();
+            services.AddTransient<ISocioController, SocioController>();
+            services.AddTransient<IAulaController, AulaController>();
+            services.AddTransient<IEquipamentoController, EquipamentoController>();
+            services.AddTransient<IReportController, ReportController>();
+
+            // Views
+            services.AddTransient<ILoginView, LoginView>();
+            services.AddTransient<IMenuPrincipalView, MenuPrincipalView>();
+            services.AddTransient<IUserView, GerirUtilizadoresView>();
+            services.AddTransient<ISociosView, GerirSociosView>();
+            services.AddTransient<IAulaView, GerirAulasView>();
+            services.AddTransient<IEquipamentoView, GerirEquipamentosView>();
+            services.AddTransient<IReportView, GerarRelatoriosView>();
+
+            var provider = services.BuildServiceProvider();
+            var loginCtrl = provider.GetRequiredService<ILoginController>();
+            var menuCtrl = provider.GetRequiredService<IMenuPrincipalController>();
+
             while (true)
             {
-                var loginView = new LoginView();
-                var authService = new AuthService();
-
-                var user = loginView.SolicitarCredenciais();
-                bool ok = authService.ValidarCredenciais(user);
-                loginView.MostrarResultadoLogin(ok);
-
-                if (!ok)
-                {
-                    Console.WriteLine("Prima Enter para tentar novamente…");
-                    Console.ReadLine();
-                    continue;           // em vez de break
-                }
-
-                // --- só entra aqui se o login for bem-sucedido ---
-                Console.WriteLine("A iniciar aplicação...");
-                Thread.Sleep(1000);
-                Console.Clear();
-
-                var menuCtrl = new MenuPrincipalController();
-                menuCtrl.MostrarMenu(user.Username, user.Role, authService);
-
+                loginCtrl.RealizarLogin(); // internamente faz login e chama o menu
                 Console.Write("Trocar de utilizador? (S/N) ");
-                if (!Console.ReadLine()!.Trim()
-                        .Equals("S", StringComparison.OrdinalIgnoreCase))
+                if (!Console.ReadLine()!.Trim().Equals("S", StringComparison.OrdinalIgnoreCase))
                     break;
             }
 

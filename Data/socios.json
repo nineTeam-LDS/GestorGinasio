@@ -24,12 +24,6 @@
     "DataInscricao": "2025-01-05T00:00:00"
   },
   {
-    "Id": 5,
-    "Nome": "Socio5",
-    "Email": "socio5@email.com",
-    "DataInscricao": "2025-01-06T00:00:00"
-  },
-  {
     "Id": 6,
     "Nome": "Socio6",
     "Email": "socio6@email.com",
@@ -142,12 +136,6 @@
     "Nome": "Socio24",
     "Email": "socio24@email.com",
     "DataInscricao": "2025-01-25T00:00:00"
-  },
-  {
-    "Id": 25,
-    "Nome": "Socio25",
-    "Email": "socio25@email.com",
-    "DataInscricao": "2025-01-26T00:00:00"
   },
   {
     "Id": 26,
@@ -364,5 +352,11 @@
     "Nome": "pedro",
     "Email": "pedro@mail.com",
     "DataInscricao": "2025-04-27T00:00:00+01:00"
+  },
+  {
+    "Id": 62,
+    "Nome": "Pauleta",
+    "Email": "goleador@tomala.morangos",
+    "DataInscricao": "2025-05-19T00:00:00+01:00"
   }
 ]

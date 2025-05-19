@@ -7,17 +7,15 @@ using GestorGinasio.Model.Repositories;
 
 namespace GestorGinasio.Model.Services
 {
-    public class InscricaoService
+    public class InscricaoService : IInscricaoService
     {
-        private readonly JsonRepository<Inscricao> _repo;
-        public InscricaoService(string filePath = "inscricoes.json")
-        {
-            _repo = new JsonRepository<Inscricao>(filePath);
-        }
+        private readonly IRepository<Inscricao> _repo;
+        public InscricaoService(IRepository<Inscricao> repo)
+          => _repo = repo ?? throw new ArgumentNullException(nameof(repo));
 
-        public List<Inscricao> GetAll() => _repo.GetAll();
-        public void Add(Inscricao i) => _repo.Add(i);
-        public void Delete(int id) => _repo.Delete(id, x => x.Id);
-        public void Update(Inscricao updated) => _repo.Update(updated, x => x.Id);
+        public IEnumerable<Inscricao> GetAll() => _repo.GetAll();                   // ---- LISTAR ----
+        public void Add(Inscricao i) => _repo.Add(i);                               // ---- CRIAR ----
+        public void Delete(int id) => _repo.Delete(id, x => x.Id);                  // ---- REMOVER ----
+        public void Update(Inscricao updated) => _repo.Update(updated, x => x.Id);  // ---- EDITAR ----
     }
 }

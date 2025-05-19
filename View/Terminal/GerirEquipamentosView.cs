@@ -1,46 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
 using GestorGinasio.Model.Entities;
-using GestorGinasio.Model.Services;
 
 namespace GestorGinasio.View.Terminal
 {
-    public static class GerirEquipamentosView
+    // Implementação de IEquipamentoView usando console.
+    public class GerirEquipamentosView : IEquipamentoView
     {
+         public ConsoleKey MostrarMenu()
+         {
+             Console.Clear();
+             Console.WriteLine("\n===== EQUIPAMENTOS =====\n");
+             Console.WriteLine("1. Listar");
+             Console.WriteLine("2. Adicionar");
+             Console.WriteLine("3. Editar");
+             Console.WriteLine("4. Remover");
+             Console.WriteLine("0. Voltar");
+             Console.Write("Opção: ");
+             return Console.ReadKey(true).Key;
+         }
+
         /*--------------------------------------------------------------*
-         * LISTAGEM                                                     *
-         *--------------------------------------------------------------*/
-        public static void MostrarLista(IEnumerable<Equipamento> lista)
+        * LISTAGEM                                                     *
+        *--------------------------------------------------------------*/
+        public void MostrarLista(IEnumerable<Equipamento> lista)
         {
             Console.Clear();
             Console.WriteLine("\n===== EQUIPAMENTOS =====\n");
-            Console.WriteLine("{0,-4} {1,-20} {2,-12} {3,-12} {4}",
-                              "Id", "Equipamento", "Quantidade", "Instrutor", "Horario");
-
+            Console.WriteLine("{0,-4} {1,-20} {2,-12} {3,-12} {4}", "Id", "Equipamento", "Quantidade", "Instrutor", "Horario");
             foreach (var e in lista)
                 Console.WriteLine($"{e.Id,-4} {e.Nome,-20} {e.Quantidade,-12} {e.Instrutor,-12} {e.Horario}");
-
-            Console.WriteLine("\n<Enter> para voltar .");
+            Console.WriteLine("\n<Enter> para continuar…");
             Console.ReadLine();
         }
 
         /*--------------------------------------------------------------*
          * NOVO EQUIPAMENTO                                             *
          *--------------------------------------------------------------*/
-        public static Equipamento PedirNovoEquipamento()
+        public Equipamento PedirNovoEquipamento()
         {
             Console.Clear();
             Console.WriteLine("\n===== NOVO EQUIPAMENTO =====\n");
 
-            Console.Write("Equipamento: "); var nome = Console.ReadLine()!; 
-            Console.Write("Quantidade: "); int qtd = int.TryParse(Console.ReadLine(), out var q) ? q : 1;
-            Console.Write("Instrutor: "); var inst = Console.ReadLine()!;
-            Console.Write("Horario: "); var hora = Console.ReadLine()!;
-
+            Console.Write("Equipamento: "); var nome = Console.ReadLine()!;
+            Console.Write("Quantidade: "); var qOk = int.TryParse(Console.ReadLine(), out var qtd);
+            Console.Write("Instrutor:  "); var instr = Console.ReadLine()!;
+            Console.Write("Horário:    "); var hora = Console.ReadLine()!;
             return new Equipamento
             {
                 Nome = nome,
-                Quantidade = qtd,
-                Instrutor = inst,
+                Quantidade = qOk && qtd > 0 ? qtd : 1,
+                Instrutor = instr,
                 Horario = hora
             };
         }
@@ -48,55 +58,60 @@ namespace GestorGinasio.View.Terminal
         /*--------------------------------------------------------------*
          * EDITAR / REMOVER                                             *
          *--------------------------------------------------------------*/
-        public static int PedirIdParaEditar()
+        public int PedirIdParaEditar()
         {
-            Console.Write("\nId a editar: ");
+            Console.Write("\nId para editar: ");
             return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
         }
 
-        public static int PedirIdParaRemover()
+        public int PedirIdParaRemover()
         {
-            Console.Write("\nId a remover: ");
+            Console.Write("\nId para remover: ");
             return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
         }
 
-        public static Equipamento PedirDadosEditados(Equipamento orig)
+        public Equipamento PedirDadosEditados(Equipamento existente)
         {
             Console.Clear();
             Console.WriteLine("\\===== EDITAR EQUIPAMENTO =====");
             Console.WriteLine("(Enter = manter o valor actual)\n");
+            Console.Write($"Equipamento [{existente.Nome}]: ");   var n = Console.ReadLine();
+            Console.Write($"Quantidade [{existente.Quantidade}]: "); var qStr = Console.ReadLine();
+            Console.Write($"Instrutor [{existente.Instrutor}]: "); var i = Console.ReadLine();
+            Console.Write($"Horário [{existente.Horario}]: "); var h = Console.ReadLine();
 
-            Console.Write($"Equipamento [{orig.Nome}]: "); var n = Console.ReadLine();
-            Console.Write($"Quantidade [{orig.Quantidade}]: "); var qStr = Console.ReadLine();
-            Console.Write($"Instrutor [{orig.Instrutor}]: "); var i = Console.ReadLine();
-            Console.Write($"Horario [{orig.Horario}]: "); var h = Console.ReadLine();
-
-
-            int quantidade;
-            bool quantidadeValida = int.TryParse(qStr, out quantidade);
-
+            int qVal;
+            bool okQ = int.TryParse(qStr, out qVal);
             return new Equipamento
             {
-                Id = orig.Id,
-                Nome = string.IsNullOrWhiteSpace(n) ? orig.Nome : n,
-                Quantidade = (quantidadeValida && quantidade > 0) ? quantidade : orig.Quantidade,
-                Instrutor = string.IsNullOrWhiteSpace(i) ? orig.Instrutor : i,
-                Horario = string.IsNullOrWhiteSpace(h) ? orig.Horario : h
+                Id = existente.Id,
+                Nome = string.IsNullOrWhiteSpace(n) ? existente.Nome : n,
+                Quantidade = okQ && qVal > 0 ? qVal : existente.Quantidade,
+                Instrutor = string.IsNullOrWhiteSpace(i) ? existente.Instrutor : i,
+                Horario = string.IsNullOrWhiteSpace(h) ? existente.Horario : h
             };
         }
 
         /*--------------------------------------------------------------*
          * UTILITÁRIOS                                                  *
          *--------------------------------------------------------------*/
-        public static bool Confirmar(string msg)
+        public bool Confirmar(string mensagem)
         {
-            Console.Write($"{msg} (S/N) ");
+            Console.Write($"{mensagem} (S/N) ");
             return Console.ReadKey(true).Key == ConsoleKey.S;
         }
 
-        public static void IdInexistente()
+        public void IdInexistente()
         {
-            Console.WriteLine("Id inexistente. <Enter>");
+            Console.WriteLine("\nId inexistente.");
+            Console.WriteLine("<Enter> para continuar…");
+            Console.ReadLine();
+        }
+
+        public void Sucesso(string mensagem)
+        {
+            Console.WriteLine($"\n{mensagem}");
+            Console.WriteLine("<Enter> para continuar…");
             Console.ReadLine();
         }
     }

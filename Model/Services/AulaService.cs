@@ -3,16 +3,14 @@ using GestorGinasio.Model.Repositories;
 
 namespace GestorGinasio.Model.Services
 {
-    public class AulaService
+    public class AulaService : IAulaService
     {
-        private readonly JsonRepository<Aula> _repo;
+        private readonly IRepository<Aula> _repo;
 
-        public AulaService(string filePath = "aulas.json")
-        {
-            _repo = new JsonRepository<Aula>(filePath);
-        }
+        public AulaService(IRepository<Aula> repo)
+          => _repo = repo ?? throw new ArgumentNullException(nameof(repo));
 
-        public List<Aula> GetAll() => _repo.GetAll();               // ---- LISTAR ----
+        public IEnumerable<Aula> GetAll() => _repo.GetAll();        // ---- LISTAR ----
         public void Add(Aula a) => _repo.Add(a);                    // ---- CRIAR ----
         public void Update(Aula a) => _repo.Update(a, x => x.Id);   // ---- EDITAR ----
         public void Delete(int id) => _repo.Delete(id, x => x.Id);  // ---- REMOVER ----

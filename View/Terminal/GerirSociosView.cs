@@ -1,72 +1,92 @@
-﻿using GestorGinasio.Model.Entities;
-using GestorGinasio.Model.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.View.Terminal
 {
-    public static class GerirSociosView
+    // Implementação concreta de ISociosView para terminal.
+    public class GerirSociosView : ISociosView
     {
-        /* LISTA -------------------------------------------------------*/
-        public static void MostrarLista(IEnumerable<Socio> lista)
+        public ConsoleKey MostrarMenu()
         {
             Console.Clear();
             Console.WriteLine("\n===== SÓCIOS =====\n");
-            Console.WriteLine("{0,-4} {1,-20} {2,-25} {3}",
-                              "Id", "Nome", "Email", "Data Inscrição");
+            Console.WriteLine("1. Listar");
+            Console.WriteLine("2. Criar");
+            Console.WriteLine("3. Editar");
+            Console.WriteLine("4. Remover");
+            Console.WriteLine("0. Voltar");
+            Console.Write("Opção: ");
+            return Console.ReadKey(true).Key;
+        }
 
+        /* LISTA -------------------------------------------------------*/
+        public void MostrarLista(IEnumerable<Socio> lista)
+        {
+            Console.Clear();
+            Console.WriteLine("\n===== SÓCIOS =====\n");
+            Console.WriteLine("{0,-4} {1,-20} {2,-25} {3}", "Id", "Nome", "Email", "Data Inscrição");
             foreach (var s in lista)
                 Console.WriteLine($"{s.Id,-4} {s.Nome,-20} {s.Email,-25} {s.DataInscricao:yyyy-MM-dd}");
-
-            Console.WriteLine("\n<Enter> para voltar .");
+            Console.WriteLine("\n<Enter> para voltar…");
+            Console.ReadLine();
+        }
+        public void MostrarDetalhes(Socio socio)
+        {
+            Console.Clear();
+            Console.WriteLine($"ID: {socio.Id}\nNome: {socio.Nome}\nEmail: {socio.Email}\nData: {socio.DataInscricao:yyyy-MM-dd}");
+            Console.WriteLine("\n<Enter> para continuar…");
             Console.ReadLine();
         }
 
         /* NOVO --------------------------------------------------------*/
-        public static Socio PedirNovoSocio()
+        public Socio PedirNovoSocio()
         {
             Console.Clear();
             Console.WriteLine("\n===== NOVO SÓCIO =====\n");
             Console.Write("Nome:  "); var n = Console.ReadLine()!;
             Console.Write("Email: "); var e = Console.ReadLine()!;
-
             return new Socio { Nome = n, Email = e, DataInscricao = DateTime.Today };
         }
 
         /* EDITAR / REMOVER -------------------------------------------*/
-        public static int PedirIdParaEditar()
+        public int PedirIdParaEditar()
         {
-            Console.Write("\nId a editar: "); return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
+            Console.Write("\nId a editar: ");
+            return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
         }
-        public static int PedirIdParaRemover() => PedirIdParaEditar();
+        public int PedirIdParaRemover() => PedirIdParaEditar();
 
-        public static Socio PedirDadosEditados(Socio o)
+        public Socio PedirDadosEditados(Socio existente)
         {
             Console.Clear();
-            Console.WriteLine("\n===== EDITAR SÓCIO === (Enter = manter) ===\n");
-            Console.Write($"Nome  [{o.Nome}]: "); var n = Console.ReadLine();
-            Console.Write($"Email [{o.Email}]: "); var e = Console.ReadLine();
-
-            return new Socio
-            {
-                Id = o.Id,
-                Nome = string.IsNullOrWhiteSpace(n) ? o.Nome : n,
-                Email = string.IsNullOrWhiteSpace(e) ? o.Email : e,
-                DataInscricao = o.DataInscricao
-            };
+            Console.WriteLine("\n===== EDITAR SÓCIO ===== (Enter = manter)\n");
+            Console.Write($"Nome  [{existente.Nome}]: "); var n = Console.ReadLine();
+            Console.Write($"Email [{existente.Email}]: "); var e = Console.ReadLine();
+            existente.Nome = string.IsNullOrWhiteSpace(n) ? existente.Nome : n;
+            existente.Email = string.IsNullOrWhiteSpace(e) ? existente.Email : e;
+            return existente;
         }
 
         /* UTILITÁRIOS -------------------------------------------------*/
-        public static void Sucesso(string msg)
+        public bool Confirmar(string mensagem)
         {
-            Console.WriteLine($"\n{msg}\n<Enter>");
+            Console.Write($"{mensagem} (S/N) ");
+            return Console.ReadKey(true).Key == ConsoleKey.S;
+        }
+
+        public void Sucesso(string mensagem)
+        {
+            Console.WriteLine($"\n{mensagem}");
+            Console.WriteLine("<Enter> para continuar…");
             Console.ReadLine();
         }
-        public static bool Confirmar(string m)
+
+        public void IdInexistente()
         {
-            Console.Write($"{m} (S/N) "); return Console.ReadKey(true).Key == ConsoleKey.S;
-        }
-        public static void IdInexistente()
-        {
-            Console.WriteLine("\nId inexistente. <Enter>");
+            Console.WriteLine("\nId inexistente.");
+            Console.WriteLine("<Enter> para continuar…");
             Console.ReadLine();
         }
     }
