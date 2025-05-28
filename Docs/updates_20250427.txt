@@ -1,0 +1,11 @@
+LDS - nineTeam - GestorGinasio - 27/04/2025
+
+Atualização de serviços e geração de relatórios
+
+- Normalizado construtores nos serviços (SocioService, AulaService, EquipamentoService, UserService, InscricaoService, AuthService) com suporte a filePath
+- Uso consistente do JsonRepository<T> em todos os serviços
+- Melhoria no ReportService:
+  - Cabeçalhos adicionados nos relatórios PDF
+  - Layout e alinhamento corrigidos (Courier New, tam. 11)
+  - Imagem logo.jpg configurada e mostrada nos PDFs
+- Pequenos ajustes no projeto para maior consistência e fiabilidade

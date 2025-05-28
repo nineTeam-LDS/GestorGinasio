@@ -1,7 +1,7 @@
 # GestorGinasio
 Gestor de Ginásio - LABds Grupo9
 ---
-Projeto da unidade curricular de Sistemas Operativos.
+Projeto da unidade curricular Laboratório de Desenvolvimento de Software.
 
 🎯 Objetivo:
 Desenvolver uma aplicação de gestão de ginásio com base em arquitetura MVC (Krasner & Pope), usando C#, JSON.NET e PDFsharp.
