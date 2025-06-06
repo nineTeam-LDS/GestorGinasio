@@ -8,7 +8,7 @@ Desenvolver uma aplicação de gestão de ginásio com base em arquitetura MVC (
 
 👥 Equipa:
 - Pedro (Líder)
-- César, Daniel, Cláudia (Desenvolvedores)
+- César, Daniel (Desenvolvedores)
 - Eugénio (Verificador)
 
 📂 Organização:

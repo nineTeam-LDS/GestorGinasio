@@ -1,4 +1,5 @@
-﻿using System;
+﻿// File: Program.cs
+using System;
 using System.Threading;
 using GestorGinasio.Controller;
 using GestorGinasio.Model.Entities;
@@ -23,19 +24,18 @@ namespace GestorGinasio
             // repositório genérico para *todas* as entidades
             services.AddScoped(typeof(IRepository<>), typeof(JsonRepository<>));
 
+            // trata erros de negócio e inesperados
+            services.AddSingleton<IErrorHandler, ErrorHandler>();
+
             // Serviços de domínio
+            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ISocioService, SocioService>();
             services.AddTransient<IAulaService, AulaService>();
             services.AddTransient<IEquipamentoService, EquipamentoService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IInscricaoService, InscricaoService>();
-            services.AddTransient<IAuthService, AuthService>();
-            services.AddSingleton<IReportService, ReportService>();
-
-            // ReportService
             services.AddSingleton<IReportService, ReportService>();
             //services.AddSingleton<IPdfRepository, PdfRepository>();
-            //services.AddTransient<IPdfService, PdfService>();
 
             // Controllers
             services.AddTransient<ILoginController, LoginController>();

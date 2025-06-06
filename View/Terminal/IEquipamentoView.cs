@@ -1,4 +1,5 @@
-﻿using System;
+﻿// File: View/Terminal/IEquipamentosView.cs
+using System;
 using System.Collections.Generic;
 using GestorGinasio.Model.Entities;
 
@@ -12,10 +13,10 @@ namespace GestorGinasio.View.Terminal
         void MostrarLista(IEnumerable<Equipamento> lista);
         Equipamento PedirNovoEquipamento();
         int PedirIdParaEditar();
-        int PedirIdParaRemover();
         Equipamento PedirDadosEditados(Equipamento existente);
+        int PedirIdParaRemover();
         bool Confirmar(string mensagem);
-        void IdInexistente();
         void Sucesso(string mensagem);
+        void Avaliar(string mensagem);
     }
 }

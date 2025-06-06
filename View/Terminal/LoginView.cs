@@ -1,20 +1,46 @@
-﻿using System;
+﻿// File: View/Terminal/LoginView.cs
+using System;
 using System.Text;
 using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.View.Terminal
 {
     // Implementação concreta da interface de login no terminal.
+    // Valida no mínimo que o username e password não fiquem em branco.
     public class LoginView : ILoginView
     {
         public User SolicitarCredenciais()
         {
+            Console.Clear();
             Console.WriteLine("---- nineTeam : IT solutions ----");
             Console.WriteLine("\n===== LOGIN =====\n");
-            Console.Write("Utilizador: ");
-            var username = Console.ReadLine();
-            Console.Write("Senha: ");
-            var password = ReadPassword();
+
+            string username;
+            do
+            {
+                Console.Write("Utilizador: ");
+                username = Console.ReadLine()?.Trim() ?? "";
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("O nome de utilizador não pode ficar em branco.");
+                    Console.ResetColor();
+                }
+            } while (string.IsNullOrWhiteSpace(username));
+
+            string password;
+            do
+            {
+                Console.Write("Senha: ");
+                password = ReadPassword().Trim();
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("A password não pode ficar em branco.");
+                    Console.ResetColor();
+                }
+            } while (string.IsNullOrWhiteSpace(password));
+
             return new User { Username = username, Password = password };
         }
 

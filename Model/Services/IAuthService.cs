@@ -1,4 +1,5 @@
-﻿using GestorGinasio.Model.Entities;
+﻿// File: Model/Services/IAuthService.cs
+using GestorGinasio.Model.Entities;
 using GestorGinasio.Model.Repositories;
 
 namespace GestorGinasio.Model.Services

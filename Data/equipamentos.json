@@ -12,5 +12,12 @@
     "Instrutor": "ana",
     "Horario": "10:00-12:00",
     "Quantidade": 4
+  },
+  {
+    "Id": 4,
+    "Nome": "tapete ioga",
+    "Instrutor": "Suzuki",
+    "Horario": "10",
+    "Quantidade": 10
   }
 ]

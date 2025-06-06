@@ -1,4 +1,5 @@
-﻿namespace GestorGinasio.Model.Services
+﻿// File: Model/Services/IJsonService.cs
+namespace GestorGinasio.Model.Services
 {
     public interface IJsonService
     {

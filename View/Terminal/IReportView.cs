@@ -1,4 +1,5 @@
-﻿using System;
+﻿// File: View/Terminal/IReportView.cs
+using System;
 
 namespace GestorGinasio.View.Terminal
 {

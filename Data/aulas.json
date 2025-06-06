@@ -19,5 +19,12 @@
     "Instrutor": "suzuky",
     "Sala": "4",
     "Horario": "08:00-9:45"
+  },
+  {
+    "Id": 4,
+    "Nome": "kendo",
+    "Instrutor": "Sakamoto",
+    "Sala": "7",
+    "Horario": "08:00-10:00"
   }
 ]

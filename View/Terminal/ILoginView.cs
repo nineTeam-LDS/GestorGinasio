@@ -1,4 +1,5 @@
-﻿using GestorGinasio.Model.Entities;
+﻿// File: View/Terminal/ILoginView.cs
+using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.View.Terminal
 {

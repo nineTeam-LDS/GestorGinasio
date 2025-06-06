@@ -1,4 +1,5 @@
-﻿using System;
+﻿// File: View/Terminal/ISociosView.cs
+using System;
 using System.Collections.Generic;
 using GestorGinasio.Model.Entities;
 
@@ -12,10 +13,10 @@ namespace GestorGinasio.View.Terminal
         void MostrarDetalhes(Socio socio);
         Socio PedirNovoSocio();
         int PedirIdParaEditar();
-        int PedirIdParaRemover();
         Socio PedirDadosEditados(Socio existente);
+        int PedirIdParaRemover();
         bool Confirmar(string mensagem);
         void Sucesso(string mensagem);
-        void IdInexistente();
+        void Avaliar(string mensagem);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// File: View/Terminal/IAulaView.cs
+using System.Collections.Generic;
 using GestorGinasio.Model.Entities;
 
 namespace GestorGinasio.View.Terminal
@@ -10,10 +11,10 @@ namespace GestorGinasio.View.Terminal
         void MostrarLista(IEnumerable<Aula> lista);
         Aula PedirNovaAula();
         int PedirIdParaEditar();
-        int PedirIdParaRemover();
         Aula PedirDadosEditados(Aula existente);
+        int PedirIdParaRemover();
         bool Confirmar(string mensagem);
         void Sucesso(string mensagem);
-        void Aviso(string mensagem);
+        void Avaliar(string mensagem);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// File: View/Terminal/GerirSociosView.cs
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GestorGinasio.Model.Entities;
@@ -21,7 +22,7 @@ namespace GestorGinasio.View.Terminal
             return Console.ReadKey(true).Key;
         }
 
-        /* LISTA -------------------------------------------------------*/
+        // ---- LISTAR ----------------------------------------------------
         public void MostrarLista(IEnumerable<Socio> lista)
         {
             Console.Clear();
@@ -40,23 +41,61 @@ namespace GestorGinasio.View.Terminal
             Console.ReadLine();
         }
 
-        /* NOVO --------------------------------------------------------*/
+        // ---- ADICIONAR -------------------------------------------------
         public Socio PedirNovoSocio()
         {
             Console.Clear();
             Console.WriteLine("\n===== NOVO SÓCIO =====\n");
-            Console.Write("Nome:  "); var n = Console.ReadLine()!;
-            Console.Write("Email: "); var e = Console.ReadLine()!;
-            return new Socio { Nome = n, Email = e, DataInscricao = DateTime.Today };
+
+            string nome;
+            do
+            {
+                Console.Write("Nome:  ");
+                nome = Console.ReadLine() ?? "";
+                if (string.IsNullOrWhiteSpace(nome))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("O nome não pode ficar em branco.");
+                    Console.ResetColor();
+                }
+            } while (string.IsNullOrWhiteSpace(nome));
+
+            string email;
+            do
+            {
+                Console.Write("Email: ");
+                email = Console.ReadLine() ?? "";
+                if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Email inválido. Deve conter um '@'.");
+                    Console.ResetColor();
+                }
+            } while (string.IsNullOrWhiteSpace(email) || !email.Contains("@"));
+
+            return new Socio
+            {
+                Nome = nome.Trim(),
+                Email = email.Trim(),
+                DataInscricao = DateTime.Today
+            };
         }
 
-        /* EDITAR / REMOVER -------------------------------------------*/
+        // ---- EDITAR --------------------------------------------------------
         public int PedirIdParaEditar()
         {
-            Console.Write("\nId a editar: ");
-            return int.TryParse(Console.ReadLine(), out var id) ? id : -1;
+            while (true)
+            {
+                Console.Write("\nId a editar: ");
+                var texto = Console.ReadLine();
+                if (int.TryParse(texto, out var id) && id > 0)
+                    return id;
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Id inválido. Introduza um número inteiro maior que zero.");
+                Console.ResetColor();
+            }
         }
-        public int PedirIdParaRemover() => PedirIdParaEditar();
 
         public Socio PedirDadosEditados(Socio existente)
         {
@@ -69,7 +108,10 @@ namespace GestorGinasio.View.Terminal
             return existente;
         }
 
-        /* UTILITÁRIOS -------------------------------------------------*/
+        // ---- REMOVER ---------------------------------------------------
+        public int PedirIdParaRemover() => PedirIdParaEditar();
+
+        // ---- UTILITÁRIOS ---------------------------------------------------
         public bool Confirmar(string mensagem)
         {
             Console.Write($"{mensagem} (S/N) ");
@@ -82,10 +124,12 @@ namespace GestorGinasio.View.Terminal
             Console.WriteLine("<Enter> para continuar…");
             Console.ReadLine();
         }
-
-        public void IdInexistente()
+        public void Avaliar(string mensagem)
         {
-            Console.WriteLine("\nId inexistente.");
+            // Caso queira exibir mensagens de aviso leve (ex.: “Id não existe”)
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"\n{mensagem}");
+            Console.ResetColor();
             Console.WriteLine("<Enter> para continuar…");
             Console.ReadLine();
         }

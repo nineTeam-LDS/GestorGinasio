@@ -1,5 +1,4 @@
-using System;
-
+// File: View/Terminal/MenuPrincipalView.cs
 namespace GestorGinasio.View.Terminal
 {
     // Implementação concreta da View do Menu Principal no terminal.

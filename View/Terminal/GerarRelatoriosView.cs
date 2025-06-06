@@ -1,4 +1,4 @@
-﻿// File: View/RelatoriosView.cs
+﻿// File: View/Terminal/GerarRelatoriosView.cs
 using System;
 
 namespace GestorGinasio.View.Terminal

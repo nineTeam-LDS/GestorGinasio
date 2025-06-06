@@ -1,4 +1,5 @@
-﻿using System;
+﻿// File: View/Terminal/IMenuPrincipalView.cs
+using System;
 
 namespace GestorGinasio.View.Terminal
 {

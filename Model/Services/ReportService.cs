@@ -1,10 +1,13 @@
-﻿using System;
+﻿// File: Model/Services/ReportService.cs
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using GestorGinasio.Model.Entities;
+using PdfSharp; // para PdfSharpException
+using GestorGinasio.Model.Exceptions;
 
 namespace GestorGinasio.Model.Services
 {
@@ -12,6 +15,10 @@ namespace GestorGinasio.Model.Services
     {
         private readonly string _logoPath;
         private readonly string _reportsDir;
+        private const int LinhasPorPagina = 40;
+        private const string FormatoSocio = "{0,5} {1,-20} {2,-30} {3}";
+        private const string FormatoAula = "{0,5} {1,-20} {2,-20} {3,5} {4}";
+        private const string FormatoEquip = "{0,5} {1,-25} {2,5} {3,-20} {4}";
 
         public ReportService()
         {
@@ -29,23 +36,36 @@ namespace GestorGinasio.Model.Services
             _logoPath = Path.Combine(baseDir, "View", "Assets", "logo.jpg");
         }
 
-        private const int LinhasPorPagina = 40;
-        private const string FormatoSocio = "{0,5} {1,-20} {2,-30} {3}";
-        private const string FormatoAula = "{0,5} {1,-20} {2,-20} {3,5} {4}";
-        private const string FormatoEquip = "{0,5} {1,-25} {2,5} {3,-20} {4}";
-
         public string GenerateSociosReport(IEnumerable<Socio> socios, string currentUser)
         {
+            // Prepara linhas
             var linhas = new List<string>
             {
                 string.Format(FormatoSocio, "Id","Nome","Email","Data Inscrição")
             };
             linhas.AddRange(socios.Select(s =>
-                string.Format(FormatoSocio, s.Id, s.Nome, s.Email, s.DataInscricao.ToString("yyyy-MM-dd"))));
+                string.Format(FormatoSocio, s.Id, s.Nome, s.Email, s.DataInscricao.ToString("yyyy-MM-dd"))
+            ));
 
-            var output = Path.Combine(_reportsDir, "Relatorios", $"Socios_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
-            GerarPdf("Relatório de Sócios", linhas, output, currentUser);
-            return output;
+            var outputFile = Path.Combine(_reportsDir, $"Socios_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            try
+            {
+                GerarPdf("Relatório de Sócios", linhas, outputFile, currentUser);
+                return outputFile;
+            }
+            catch (IOException ex)
+            {
+                throw new PdfGenerationException($"Falha de I/O ao gravar o PDF em '{outputFile}'.", ex);
+            }
+            catch (PdfSharpException ex)
+            {
+                throw new PdfGenerationException($"Erro interno do PDFsharp ao gerar relatório de sócios.", ex);
+            }
+            catch (Exception ex)
+            {
+                // Qualquer outro erro imprevisto
+                throw new PdfGenerationException($"Erro inesperado ao gerar relatório de sócios.", ex);
+            }
         }
 
         public string GenerateAulasReport(IEnumerable<Aula> aulas, string currentUser)
@@ -55,11 +75,27 @@ namespace GestorGinasio.Model.Services
                 string.Format(FormatoAula, "Id","Nome","Instrutor","Sala","Horário")
             };
             linhas.AddRange(aulas.Select(a =>
-                string.Format(FormatoAula, a.Id, a.Nome, a.Instrutor, a.Sala, a.Horario)));
+                string.Format(FormatoAula, a.Id, a.Nome, a.Instrutor, a.Sala, a.Horario)
+            ));
 
-            var output = Path.Combine(_reportsDir, "Relatorios", $"Aulas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
-            GerarPdf("Relatório de Aulas", linhas, output, currentUser);
-            return output;
+            var outputFile = Path.Combine(_reportsDir, $"Aulas_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            try
+            {
+                GerarPdf("Relatório de Aulas", linhas, outputFile, currentUser);
+                return outputFile;
+            }
+            catch (IOException ex)
+            {
+                throw new PdfGenerationException($"Falha de I/O ao gravar o PDF em '{outputFile}'.", ex);
+            }
+            catch (PdfSharpException ex)
+            {
+                throw new PdfGenerationException($"Erro interno do PDFsharp ao gerar relatório de aulas.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PdfGenerationException($"Erro inesperado ao gerar relatório de aulas.", ex);
+            }
         }
 
         public string GenerateEquipamentosReport(IEnumerable<Equipamento> equipamentos, string currentUser)
@@ -69,11 +105,27 @@ namespace GestorGinasio.Model.Services
                 string.Format(FormatoEquip, "Id","Nome","Qtd","Instrutor","Horário")
             };
             linhas.AddRange(equipamentos.Select(e =>
-                string.Format(FormatoEquip, e.Id, e.Nome, e.Quantidade, e.Instrutor, e.Horario)));
+                string.Format(FormatoEquip, e.Id, e.Nome, e.Quantidade, e.Instrutor, e.Horario)
+            ));
 
-            var output = Path.Combine(_reportsDir, "Relatorios", $"Equipamentos_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
-            GerarPdf("Relatório de Equipamentos", linhas, output, currentUser);
-            return output;
+            var outputFile = Path.Combine(_reportsDir, $"Equipamentos_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            try
+            {
+                GerarPdf("Relatório de Equipamentos", linhas, outputFile, currentUser);
+                return outputFile;
+            }
+            catch (IOException ex)
+            {
+                throw new PdfGenerationException($"Falha de I/O ao gravar o PDF em '{outputFile}'.", ex);
+            }
+            catch (PdfSharpException ex)
+            {
+                throw new PdfGenerationException($"Erro interno do PDFsharp ao gerar relatório de equipamentos.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new PdfGenerationException($"Erro inesperado ao gerar relatório de equipamentos.", ex);
+            }
         }
 
         private void GerarPdf(string titulo, IEnumerable<string> linhas, string ficheiro, string utilizador)
@@ -86,9 +138,9 @@ namespace GestorGinasio.Model.Services
             var fontHeader = new XFont("Arial", 12, XFontStyle.Bold);
             var fontLine = new XFont("Courier New", 11, XFontStyle.Regular);
             var fontRodape = new XFont("Arial", 9, XFontStyle.Italic);
-
             double y = 50;
 
+            // Inserir logo, se existir
             if (File.Exists(_logoPath))
             {
                 using var img = XImage.FromFile(_logoPath);
@@ -96,9 +148,12 @@ namespace GestorGinasio.Model.Services
                 y += 60;
             }
 
-            gfx.DrawString(titulo, fontTitle, XBrushes.Black, new XRect(0, y, page.Width, 30), XStringFormats.TopCenter);
+            // Título
+            gfx.DrawString(titulo, fontTitle, XBrushes.Black,
+                new XRect(0, y, page.Width, 30), XStringFormats.TopCenter);
             y += 40;
 
+            // Cabeçalho com data e utilizador
             gfx.DrawString(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), fontHeader, XBrushes.Black, 50, y);
             gfx.DrawString($"Utilizador: {utilizador}", fontHeader, XBrushes.Black, page.Width - 200, y);
             y += 30;
@@ -106,30 +161,30 @@ namespace GestorGinasio.Model.Services
             gfx.DrawLine(XPens.Black, 50, y, page.Width - 50, y);
             y += 20;
 
-            int contadorLinhas = 0;
-
+            int contador = 0;
             foreach (var linha in linhas)
             {
-                if (contadorLinhas == LinhasPorPagina)
+                if (contador == LinhasPorPagina)
                 {
                     InserirRodape(gfx, doc.PageCount);
                     page = doc.AddPage();
                     gfx.Dispose();
                     gfx = XGraphics.FromPdfPage(page);
                     y = 50;
-                    contadorLinhas = 0;
+                    contador = 0;
                 }
 
                 gfx.DrawString(linha, fontLine, XBrushes.Black, 50, y);
                 y += 15;
-                contadorLinhas++;
+                contador++;
             }
 
             InserirRodape(gfx, doc.PageCount);
 
+            // Garante que a pasta existe (já foi criada no construtor)
             Directory.CreateDirectory(Path.GetDirectoryName(ficheiro)!);
-            doc.Save(ficheiro);
 
+            doc.Save(ficheiro);
             // Abrir automaticamente o PDF
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
@@ -141,7 +196,8 @@ namespace GestorGinasio.Model.Services
         private static void InserirRodape(XGraphics gfx, int pagina)
         {
             var fontRodape = new XFont("Arial", 9, XFontStyle.Italic);
-            gfx.DrawString($"Página {pagina}", fontRodape, XBrushes.Gray, new XRect(0, gfx.PageSize.Height - 30, gfx.PageSize.Width, 20), XStringFormats.Center);
+            gfx.DrawString($"Página {pagina}", fontRodape, XBrushes.Gray,
+                new XRect(0, gfx.PageSize.Height - 30, gfx.PageSize.Width, 20), XStringFormats.Center);
         }
     }
 }

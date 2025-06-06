@@ -28,5 +28,11 @@
     "Username": "suzuky",
     "Password": "0000",
     "Role": "Prof"
+  },
+  {
+    "Id": 6,
+    "Username": "Xiripiti",
+    "Password": "0000",
+    "Role": "limpezas"
   }
 ]
