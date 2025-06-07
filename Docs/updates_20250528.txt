@@ -1,0 +1,52 @@
+LDS - nineTeam - GestorGinasio
+
+Implementação de interfaces (de 28/04/2025 a 28/05/2025)
+
+1) Criação dos contratos genéricos
+
+- IRepository<T>: define métodos GetAll(), Add(), Update(), Delete() e GetById();
+- IJsonService: abstrai leitura/gravação de JSON (métodos Load<T>(string) e Save<T>(string,T));
+- Para cada serviço de domínio (Sócio, Aula, Equipamento, User, Inscrição, Autenticação, Relatórios), 
+  foi criado um interface IXService (por ex. ISocioService, IAulaService, etc.), contendo apenas as assinaturas de métodos 
+  (ex.: GetAll(), Add(...), Update(...), Delete(...)).
+- Nos controllers, surgiram interfaces do tipo IXController (ex.: ISocioController, IAulaController, etc.) e, 
+  nas views de terminal, interfaces IXView (ex.: ISociosView, IAulaView, etc.).
+
+2) Refatoração dos repositórios JSON
+
+- JsonRepository<T> foi tornado genérico, recebendo apenas IJsonService no construtor e deduzindo automaticamente 
+  o caminho de Data/{typeof(T).Name.ToLowerInvariant()}s.json;
+- Todas as chamadas diretas a new JsonRepository<T>(…) individualizadas foram substituídas por services.AddScoped(typeof(IRepository<>),
+  typeof(JsonRepository<>)) no DI;
+- Antigo IPdfService foi considerado redundante e removido, pois o ReportService já encapsula a geração de PDF diretamente.
+
+3) Ajustes em Program.cs (DI registration)
+
+- Registrou-se IJsonService → JsonService (singleton);
+- services.AddScoped(typeof(IRepository<>), typeof(JsonRepository<>)); para todas as entidades;
+- Para cada IXService (ex.: ISocioService → SocioService, IAulaService → AulaService, etc.), AddTransient<IXService, XService>();
+- Para cada par IXView → XView e IXController → XController, também AddTransient<> no container;
+- ErrorHandler começou a ser registrado como singleton, embora somente à fase 3 (tratamento de erros) tenha sido usado.
+
+4) Refatoração dos serviços de domínio
+
+- Cada XService deixou de invocar diretamente um JsonRepository<Entidade> concreto, passando a depender de IRepository<Entidade>;
+- Implementou-se injeção de IRepository<Entidade> via construtor, reforçando baixo acoplamento;
+- Métodos de negócio (e.g. validar campos obrigatórios, regras de duplicação) foram isolados em XService, enquanto a persistência 
+  permaneceu em JsonRepository<T>.
+
+5) Controllers e Views convertidos para interfaces
+
+- Em SocioController, IAulaController, EquipamentoController, UserController, LoginController, ReportController e MenuPrincipalController, 
+  alterou-se o construtor para receber apenas interfaces;
+- Nas views (e.g. GerirSociosView, GerirAulasView, GerirEquipamentosView, GerirUtilizadoresView, LoginView, GerarRelatoriosView, MenuPrincipalView), 
+  passou-se a expor apenas o contrato IXView;
+- A lógica de navegação (menus de terminal, leitura de opções) manteve-se, mas “costurou-se” a invocação dos controllers por meio dessas interfaces.
+
+6) Related changes notáveis
+
+- Em cada controller, o acesso a repositório via new JsonRepository<T>(…) foi substituído por GetRequiredService<IRepository<T>>();
+- Ajustes nos namespaces e usings para refletir as novas estruturas de pastas (e.g. Model/Services, Model/Repositories, Controller, View/Terminal);
+- AuthService e ILoginController passaram a funcionar inteiramente via IRepository<User>;
+- Exceções de persistência (até aqui genéricas) foram deixadas para a fase seguinte, mas já havia preparação para envolver JsonException 
+  em JsonFileFormatException e IOException em RepositoryException dentro do repositório.

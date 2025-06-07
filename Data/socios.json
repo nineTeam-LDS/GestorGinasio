@@ -1,0 +1,374 @@
+[
+  {
+    "Id": 1,
+    "Nome": "Socio1",
+    "Email": "socio1@email.com",
+    "DataInscricao": "2025-01-02T00:00:00"
+  },
+  {
+    "Id": 2,
+    "Nome": "Socio2",
+    "Email": "socio2@email.com",
+    "DataInscricao": "2025-01-03T00:00:00"
+  },
+  {
+    "Id": 3,
+    "Nome": "Socio3",
+    "Email": "socio3@email.com",
+    "DataInscricao": "2025-01-04T00:00:00"
+  },
+  {
+    "Id": 4,
+    "Nome": "Socio4",
+    "Email": "socio4@email.com",
+    "DataInscricao": "2025-01-05T00:00:00"
+  },
+  {
+    "Id": 6,
+    "Nome": "Socio6",
+    "Email": "socio6@email.com",
+    "DataInscricao": "2025-01-07T00:00:00"
+  },
+  {
+    "Id": 7,
+    "Nome": "Socio7",
+    "Email": "socio7@email.com",
+    "DataInscricao": "2025-01-08T00:00:00"
+  },
+  {
+    "Id": 8,
+    "Nome": "Socio8",
+    "Email": "socio8@email.com",
+    "DataInscricao": "2025-01-09T00:00:00"
+  },
+  {
+    "Id": 9,
+    "Nome": "Socio9",
+    "Email": "socio9@email.com",
+    "DataInscricao": "2025-01-10T00:00:00"
+  },
+  {
+    "Id": 10,
+    "Nome": "Socio10",
+    "Email": "socio10@email.com",
+    "DataInscricao": "2025-01-11T00:00:00"
+  },
+  {
+    "Id": 11,
+    "Nome": "Socio11",
+    "Email": "socio11@email.com",
+    "DataInscricao": "2025-01-12T00:00:00"
+  },
+  {
+    "Id": 12,
+    "Nome": "Socio12",
+    "Email": "socio12@email.com",
+    "DataInscricao": "2025-01-13T00:00:00"
+  },
+  {
+    "Id": 13,
+    "Nome": "Socio13",
+    "Email": "socio13@email.com",
+    "DataInscricao": "2025-01-14T00:00:00"
+  },
+  {
+    "Id": 14,
+    "Nome": "Socio14",
+    "Email": "socio14@email.com",
+    "DataInscricao": "2025-01-15T00:00:00"
+  },
+  {
+    "Id": 15,
+    "Nome": "Socio15",
+    "Email": "socio15@email.com",
+    "DataInscricao": "2025-01-16T00:00:00"
+  },
+  {
+    "Id": 16,
+    "Nome": "Socio16",
+    "Email": "socio16@email.com",
+    "DataInscricao": "2025-01-17T00:00:00"
+  },
+  {
+    "Id": 17,
+    "Nome": "Socio17",
+    "Email": "socio17@email.com",
+    "DataInscricao": "2025-01-18T00:00:00"
+  },
+  {
+    "Id": 18,
+    "Nome": "Socio18",
+    "Email": "socio18@email.com",
+    "DataInscricao": "2025-01-19T00:00:00"
+  },
+  {
+    "Id": 19,
+    "Nome": "Socio19",
+    "Email": "socio19@email.com",
+    "DataInscricao": "2025-01-20T00:00:00"
+  },
+  {
+    "Id": 20,
+    "Nome": "Socio20",
+    "Email": "socio20@email.com",
+    "DataInscricao": "2025-01-21T00:00:00"
+  },
+  {
+    "Id": 21,
+    "Nome": "Socio21",
+    "Email": "socio21@email.com",
+    "DataInscricao": "2025-01-22T00:00:00"
+  },
+  {
+    "Id": 22,
+    "Nome": "Socio22",
+    "Email": "socio22@email.com",
+    "DataInscricao": "2025-01-23T00:00:00"
+  },
+  {
+    "Id": 23,
+    "Nome": "Socio23",
+    "Email": "socio23@email.com",
+    "DataInscricao": "2025-01-24T00:00:00"
+  },
+  {
+    "Id": 24,
+    "Nome": "Socio24",
+    "Email": "socio24@email.com",
+    "DataInscricao": "2025-01-25T00:00:00"
+  },
+  {
+    "Id": 26,
+    "Nome": "Socio26",
+    "Email": "socio26@email.com",
+    "DataInscricao": "2025-01-27T00:00:00"
+  },
+  {
+    "Id": 27,
+    "Nome": "Socio27",
+    "Email": "socio27@email.com",
+    "DataInscricao": "2025-01-28T00:00:00"
+  },
+  {
+    "Id": 28,
+    "Nome": "Socio28",
+    "Email": "socio28@email.com",
+    "DataInscricao": "2025-01-29T00:00:00"
+  },
+  {
+    "Id": 29,
+    "Nome": "Socio29",
+    "Email": "socio29@email.com",
+    "DataInscricao": "2025-01-30T00:00:00"
+  },
+  {
+    "Id": 30,
+    "Nome": "Socio30",
+    "Email": "socio30@email.com",
+    "DataInscricao": "2025-01-31T00:00:00"
+  },
+  {
+    "Id": 31,
+    "Nome": "Socio31",
+    "Email": "socio31@email.com",
+    "DataInscricao": "2025-02-01T00:00:00"
+  },
+  {
+    "Id": 32,
+    "Nome": "Socio32",
+    "Email": "socio32@email.com",
+    "DataInscricao": "2025-02-02T00:00:00"
+  },
+  {
+    "Id": 33,
+    "Nome": "Socio33",
+    "Email": "socio33@email.com",
+    "DataInscricao": "2025-02-03T00:00:00"
+  },
+  {
+    "Id": 34,
+    "Nome": "Socio34",
+    "Email": "socio34@email.com",
+    "DataInscricao": "2025-02-04T00:00:00"
+  },
+  {
+    "Id": 35,
+    "Nome": "Socio35",
+    "Email": "socio35@email.com",
+    "DataInscricao": "2025-02-05T00:00:00"
+  },
+  {
+    "Id": 36,
+    "Nome": "Socio36",
+    "Email": "socio36@email.com",
+    "DataInscricao": "2025-02-06T00:00:00"
+  },
+  {
+    "Id": 37,
+    "Nome": "Socio37",
+    "Email": "socio37@email.com",
+    "DataInscricao": "2025-02-07T00:00:00"
+  },
+  {
+    "Id": 38,
+    "Nome": "Socio38",
+    "Email": "socio38@email.com",
+    "DataInscricao": "2025-02-08T00:00:00"
+  },
+  {
+    "Id": 39,
+    "Nome": "Socio39",
+    "Email": "socio39@email.com",
+    "DataInscricao": "2025-02-09T00:00:00"
+  },
+  {
+    "Id": 40,
+    "Nome": "Socio40",
+    "Email": "socio40@email.com",
+    "DataInscricao": "2025-02-10T00:00:00"
+  },
+  {
+    "Id": 41,
+    "Nome": "Socio41",
+    "Email": "socio41@email.com",
+    "DataInscricao": "2025-02-11T00:00:00"
+  },
+  {
+    "Id": 42,
+    "Nome": "Socio42",
+    "Email": "socio42@email.com",
+    "DataInscricao": "2025-02-12T00:00:00"
+  },
+  {
+    "Id": 43,
+    "Nome": "Socio43",
+    "Email": "socio43@email.com",
+    "DataInscricao": "2025-02-13T00:00:00"
+  },
+  {
+    "Id": 44,
+    "Nome": "Socio44",
+    "Email": "socio44@email.com",
+    "DataInscricao": "2025-02-14T00:00:00"
+  },
+  {
+    "Id": 45,
+    "Nome": "Socio45",
+    "Email": "socio45@email.com",
+    "DataInscricao": "2025-02-15T00:00:00"
+  },
+  {
+    "Id": 46,
+    "Nome": "Socio46",
+    "Email": "socio46@email.com",
+    "DataInscricao": "2025-02-16T00:00:00"
+  },
+  {
+    "Id": 47,
+    "Nome": "Socio47",
+    "Email": "socio47@email.com",
+    "DataInscricao": "2025-02-17T00:00:00"
+  },
+  {
+    "Id": 48,
+    "Nome": "Socio48",
+    "Email": "socio48@email.com",
+    "DataInscricao": "2025-02-18T00:00:00"
+  },
+  {
+    "Id": 49,
+    "Nome": "Socio49",
+    "Email": "socio49@email.com",
+    "DataInscricao": "2025-02-19T00:00:00"
+  },
+  {
+    "Id": 50,
+    "Nome": "Socio50",
+    "Email": "socio50@email.com",
+    "DataInscricao": "2025-02-20T00:00:00"
+  },
+  {
+    "Id": 51,
+    "Nome": "Socio51",
+    "Email": "socio51@email.com",
+    "DataInscricao": "2025-02-21T00:00:00"
+  },
+  {
+    "Id": 52,
+    "Nome": "Socio52",
+    "Email": "socio52@email.com",
+    "DataInscricao": "2025-02-22T00:00:00"
+  },
+  {
+    "Id": 53,
+    "Nome": "Socio53",
+    "Email": "socio53@email.com",
+    "DataInscricao": "2025-02-23T00:00:00"
+  },
+  {
+    "Id": 54,
+    "Nome": "Socio54",
+    "Email": "socio54@email.com",
+    "DataInscricao": "2025-02-24T00:00:00"
+  },
+  {
+    "Id": 55,
+    "Nome": "Socio55",
+    "Email": "socio55@email.com",
+    "DataInscricao": "2025-02-25T00:00:00"
+  },
+  {
+    "Id": 56,
+    "Nome": "Socio56",
+    "Email": "socio56@email.com",
+    "DataInscricao": "2025-02-26T00:00:00"
+  },
+  {
+    "Id": 57,
+    "Nome": "Socio57",
+    "Email": "socio57@email.com",
+    "DataInscricao": "2025-02-27T00:00:00"
+  },
+  {
+    "Id": 58,
+    "Nome": "Socio58",
+    "Email": "socio58@email.com",
+    "DataInscricao": "2025-02-28T00:00:00"
+  },
+  {
+    "Id": 59,
+    "Nome": "Socio59",
+    "Email": "socio59@email.com",
+    "DataInscricao": "2025-03-01T00:00:00"
+  },
+  {
+    "Id": 60,
+    "Nome": "Socio60",
+    "Email": "socio60@email.com",
+    "DataInscricao": "2025-03-02T00:00:00"
+  },
+  {
+    "Id": 61,
+    "Nome": "pedro",
+    "Email": "pedro@mail.com",
+    "DataInscricao": "2025-04-27T00:00:00+01:00"
+  },
+  {
+    "Id": 62,
+    "Nome": "Pauleta",
+    "Email": "goleador@tomala.morangos",
+    "DataInscricao": "2025-05-19T00:00:00+01:00"
+  },
+  {
+    "Id": 63,
+    "Nome": "rui",
+    "Email": "ruizink@mail.com",
+    "DataInscricao": "2025-06-05T00:00:00+01:00"
+  },
+  {
+    "Id": 64,
+    "Nome": "Xana",
+    "Email": "xanax@mail.pt",
+    "DataInscricao": "2025-06-06T00:00:00+01:00"
+  }
+]

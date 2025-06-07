@@ -1,0 +1,70 @@
+GestorGinasio/  
+│  GestorGinasio.sln  
+│  Program.cs  
+│  README.md  
+│  .editorconfig  
+│  .gitignore  
+│  
+├─Controller/  
+│     AulaController.cs  
+│     EquipamentoController.cs  
+│     LoginController.cs  
+│     MenuPrincipalController.cs  
+│     ReportController.cs  
+│     SocioController.cs  
+│     UserController.cs  
+│     README.md  
+│  
+├─Model/  
+│  ├─Entities/  
+│  │     Aula.cs  
+│  │     Equipamento.cs  
+│  │     Inscricao.cs  
+│  │     Socio.cs  
+│  │     User.cs  
+│  │     README.md  
+│  ├─Repositories/  
+│  │     JsonRepository.cs  
+│  │     README.md  
+│  └─Services/  
+│        AulaService.cs  
+│        AuthService.cs  
+│        EquipamentoService.cs  
+│        InscricaoService.cs  
+│        JsonService.cs  
+│        ReportService.cs  
+│        SocioService.cs  
+│        UserService.cs  
+│        README.md  
+│  
+├─View/  
+│  ├─Assets/  
+│  │     logo.jpg  
+│  └─Terminal/  
+│        GerarRelatoriosView.cs  
+│        GerirAulasView.cs  
+│        GerirEquipamentosView.cs  
+│        GerirSociosView.cs  
+│        GerirUtilizadoresView.cs  
+│        LoginView.cs  
+│        MenuPrincipalView.cs  
+│        SocioView.cs  
+│        README.md  
+│  
+├─Data/  
+│     aulas.json  
+│     equipamentos.json  
+│     socios.json  
+│     users.json  
+│     README.md  
+│  
+├─Docs/  
+│     BoasPraticasGit.pdf  
+│     Estrutura_25abr2025_v2.docx  
+│     UML_K&P_04.txt  
+│     Estrutura_pastas-ficheiros_26abr2025.txt  
+│     README.md  
+│  
+└─Tests/  
+      TestSocio.cs  
+      README.md  

@@ -1,0 +1,70 @@
+LDS - nineTeam - GestorGinasio
+
+Gestão e tratamento de erros (01/06/2025 a 06/06/2025)
+
+
+1) Introdução de IErrorHandler
+
+- Definiu‐se um novo contrato IErrorHandler com métodos:
+	- void ShowError(string message) → exibe a mensagem em vermelho no terminal e aguarda ENTER;
+	- void LogError(Exception ex, string context) → grava stack‐trace em Logs/erros_YYYYMMDD.txt.
+- Implementação concreta ErrorHandler foi registrada em DI como singleton.
+
+2) Validações na camada de View
+
+- Em todas as classes GerirXView, onde antes se deixava retornar -1 ou texto vazio, ajustou‐se para:
+	- Leia loop via int.TryParse(...) repetidamente até obter inteiro > 0 para IDs e quantidades;
+	- Laços do‐while verificando string.IsNullOrWhiteSpace(...) para campos “Nome”, “Instrutor”, “Email”, “Username”, “Password”, 
+	  “Role” etc., evitando deixar valores inválidos prosseguirem ao controller;
+	- Tratamento mínimo de formato (ex.: horário deve conter “-”, e‐mail deve conter “@”).
+
+3) Repositoriedade (JsonRepository<T>)
+
+- Dentro dos métodos GetAll(), Add(), Update(), Delete(), passaram a capturar JsonException e lançar JsonFileFormatException("…");
+- IOException passou a ser capturado e envolvido em RepositoryException("…");
+- O construtor de JsonRepository<T> foi refatorado para:
+	- Deduzir automaticamente _path = Data/{tipo.ToLowerInvariant()}s.json;
+	- Tentar Load<List<T>>(_path) no construtor, capturando JsonFileFormatException (inicializa em new List<T>() 
+	  e grava imediatamente para repor JSON limpo) e RepositoryException (inicializa lista vazia);
+	- Garantir via Directory.CreateDirectory(...) que a pasta “Data” exista, evitando DirectoryNotFoundException.
+
+4) Serviços de domínio (XService)
+
+- Para cada operação de criação/atualização, adicionou‐se:
+	- if (entidade == null) throw new ArgumentNullException(...);
+	- Validações de negócio específicas (BusinessException), como “Nome não pode ficar vazio”, “Quantidade deve ser > 0”, 
+	  “Email deve conter @”, “Nome duplicado”, “Sala não vazia” etc.;
+	- Em Update e Delete, se o ID não fosse encontrado no repositório, jogava‐se BusinessException("X com Id=... não encontrado.").
+
+5) Controllers (XController)
+
+- Injeção de IErrorHandler no construtor, além das dependências já existentes (serviços e views);
+- Passagem de todo o loop de menu para um bloco try { … } catch externo, capturando:
+	- JsonFileFormatException → “JSON corrompido em dados de domínio” – exibe via ShowError, loga e chama Environment.Exit(1) (erro fatal);
+	- RepositoryException → “Falha de I/O ao aceder aos dados” – exibe, loga e encerra (fatal);
+	- PdfGenerationException (no caso do ReportController ou MenuPrincipalController ao gerar relatório) → exibe, loga, mas não encerra (retorna ao menu);
+	- Exception genérica → exibe “Erro inesperado” e encerra.
+- Cada opção de menu (Listar, Criar, Editar, Remover, GerarRelatórios etc.) passou a usar um helper privado ExecutarComTratamento(Action acao) que:
+	- Envolve acao() num try { … } catch interno, capturando:
+		- BusinessException → mensagem de negócio (“Falha de negócio: …”) e log;
+		- JsonFileFormatException → “JSON corrompido” e log;
+		- RepositoryException → “Falha de I/O” e log;
+		- PdfGenerationException → “Falha ao gerar PDF” e log (quando aplicável);
+		- Exception → “Erro interno” e log.
+
+6) Login e Menu Principal
+
+- LoginController adaptado para envolver ValidarCredenciais num try/catch:
+	- BusinessException → exibe falha de negócio (ex.: nome vazio) e reinicia login;
+	- JsonFileFormatException e RepositoryException → exibe (JSON ou I/O) e encerra;
+	- Exception → “Erro inesperado” e encerra.
+- MenuPrincipalController teve bloco genérico try/catch cobrindo todas as opções:
+	- case para Sócios, Aulas, Equipamentos, Users, Relatórios, cada um embrulhado em ExecutarComTratamento;
+	- Tratamento de JsonFileFormatException e RepositoryException (fatais no menu principal) → exibe, loga e encerra;
+	- PdfGenerationException (quando usuário tenta gerar relatório) → exibe, loga, sem sair;
+	- Exception genérico → exibe e encerra.
+- Resumo dos tipos de exceção criados e usados
+	- BusinessException – violações de regra de negócio;
+	- JsonFileFormatException – JSON inválido/corrompido;
+	- RepositoryException – falhas de I/O em leitura/gravação;
+	- PdfGenerationException – falha ao gerar ou salvar PDF.
