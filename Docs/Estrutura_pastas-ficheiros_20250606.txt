@@ -1,0 +1,95 @@
+GestorGinasio/
+├─ Dependencies/
+├─ Controller/
+│  ├─ AulaController.cs
+│  ├─ EquipamentoController.cs
+│  ├─ IAulaController.cs
+│  ├─ IEquipamentoController.cs
+│  ├─ ILoginController.cs
+│  ├─ IMenuPrincipalController.cs
+│  ├─ IReportController.cs
+│  ├─ ISocioController.cs
+│  ├─ IUserController.cs
+│  ├─ LoginController.cs
+│  ├─ MenuPrincipalController.cs
+│  ├─ ReportController.cs
+│  ├─ SocioController.cs
+│  ├─ UserController.cs
+│  └─ README.md
+├─ Data/
+│  ├─ aulas.json
+│  ├─ equipamentos.json
+│  ├─ README.md
+│  ├─ socios00.json
+│  ├─ socios01.json
+│  ├─ socios.json
+│  └─ users.json
+├─ Docs/
+│  ├─ BoasPraticasGit.pdf
+│  ├─ Estrutura_pastas-ficheiros_26abr2025.txt
+│  ├─ Estrutura_pastas-ficheiros_26abr2025_v2.txt
+│  ├─ README.md
+│  ├─ UML_K&P_04.txt
+│  ├─ updates_20250427.txt
+│  ├─ updates_20250528.txt
+│  └─ updates_20250606.txt
+├─ Model/
+│  ├─ Entities/
+│  │  ├─ aula.cs
+│  │  ├─ equipamento.cs
+│  │  ├─ Inscricao.cs
+│  │  ├─ Socio.cs
+│  │  ├─ User.cs
+│  │  └─ README.md
+│  ├─ Exceptions/
+│  │  ├─ BusinessException.cs
+│  │  ├─ JsonFileFormatException.cs
+│  │  ├─ PdfGenerationException.cs
+│  │  └─ RepositoryException.cs
+│  ├─ Repositories/
+│  │  ├─ IRepository.cs
+│  │  └─ JsonRepository.cs
+│  └─ Services/
+│     ├─ AulaService.cs
+│     ├─ AuthService.cs
+│     ├─ EquipamentoService.cs
+│     ├─ IAulaService.cs
+│     ├─ IAuthService.cs
+│     ├─ IEquipamentoService.cs
+│     ├─ IInscricaoService.cs
+│     ├─ IJsonService.cs
+│     ├─ InscricaoService.cs
+│     ├─ IPdfService.cs
+│     ├─ IReportService.cs
+│     ├─ ISocioService.cs
+│     ├─ IUserService.cs
+│     ├─ JsonService.cs
+│     ├─ ReportService.cs
+│     ├─ SocioService.cs
+│     └─ UserService.cs
+├─ Tests/
+│  └─ README.md
+├─ View/
+│  ├─ Assets/
+│  │  └─ logo.jpg
+│  └─ Terminal/
+│     ├─ ErrorHandler.cs
+│     ├─ GerarRelatoriosView.cs
+│     ├─ GerirAulasView.cs
+│     ├─ GerirEquipamentosView.cs
+│     ├─ GerirSociosView.cs
+│     ├─ GerirUtilizadoresView.cs
+│     ├─ IAulaView.cs
+│     ├─ IEquipamentoView.cs
+│     ├─ IErrorHandler.cs
+│     ├─ ILoginView.cs
+│     ├─ IMenuPrincipalView.cs
+│     ├─ IReportView.cs
+│     ├─ ISociosView.cs
+│     ├─ IUserView.cs
+│     ├─ LoginView.cs
+│     └─ MenuPrincipalView.cs
+├─ .editorconfig
+├─ .gitignore
+├─ Program.cs
+└─ README.md
