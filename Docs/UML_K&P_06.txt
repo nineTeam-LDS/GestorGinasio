@@ -1,0 +1,487 @@
+@startuml
+
+'Correr no VSCode com extensão PlantUML por “jebbs” (RUN: Alt+D)
+
+title Fluxo Global - Gestão de Ginásio (MVC com arquitetura Krasner & Pope)
+
+'================================================================
+'  Definição de cores para cada camada
+'================================================================
+!define VIEW_BG       #LightBlue
+!define CONTROLLER_BG #LightGreen
+!define MODEL_BG      #Yellow
+
+'================================================================
+'  Atores externos
+'================================================================
+actor Administrador
+actor Sistema
+
+'================================================================
+'  Box “View” (camada de apresentação) - cor LightBlue
+'================================================================
+box "CAMADA VIEW" VIEW_BG
+    participant LoginView                as LV
+    participant MenuPrincipalView        as MPV
+    participant GerirSociosView          as GSV
+    participant GerirAulasView           as GAV
+    participant GerirEquipamentosView    as GEV
+    participant GerirUtilizadoresView    as GUV
+    participant GerarRelatoriosView      as GRV
+end box
+
+'================================================================
+'  Box “Controller” (camada de controlo) - cor LightGreen
+'================================================================
+box "CAMADA CONTROLLER" CONTROLLER_BG
+    participant LoginController           as LC
+    participant MenuPrincipalController   as MPC
+    participant SocioController           as SC
+    participant AulaController            as AC
+    participant EquipamentoController     as EC
+    participant UserController            as UC
+    participant ReportController          as RC
+end box
+
+'================================================================
+'  Box “Model” (camada de lógica e persistência) - cor Yellow
+'================================================================
+'– Agrupamento geral da camada Model –'
+' Este `box` externo só serve para colorir o fundo toda a área Model
+box "CAMADA MODEL" MODEL_BG
+
+  '– Os participantes que de fato trocam mensagens –'
+    participant AuthService    as AS
+    participant JsonService    as JS
+    participant PdfService     as PS
+    participant ErrorHandler   as EH
+
+  '– Sub-caixa para repositórios JSON –'
+    participant "JsonRepository<User>" as JR_User
+    note left of JR_User
+      • JsonRepository<Socio>  
+      • JsonRepository<Aula>  
+      • JsonRepository<Equipamento>  
+      • JsonRepository<User>  
+      • JsonRepository<Inscricao>
+    end note
+
+  '– Sub-caixa para entidades de domínio –'
+    participant "Entidade" as ENTTY
+    note left of ENTTY
+      • Socio
+      • Aula
+      • Equipamento
+      • User
+    end note
+
+end box
+
+
+'================================================================
+'  1. Login / Autenticação
+'================================================================
+=== Início da Aplicação ===
+
+Administrador -> LV : [1] Iniciar aplicação  
+activate LV
+
+LV -> LC : [2] Solicitar tela de login  
+deactivate LV
+
+LC -> LV : [3] MostrarLogin()  
+activate LV
+
+LV -> LC : [4] SubmeterCredenciais(username, password)  
+deactivate LV
+activate LC
+
+LC -> AS : [5] ValidarCredenciais(username, password)  
+activate AS
+
+AS -> JS : [6] Load<List<User>>("users.json")  
+activate JS
+
+JS --> JR_User : JSON raw ou lança JsonFileFormatException  
+activate JR_User
+JR_User -> JS : retorna JSON ou JsonFileFormatException  
+deactivate JR_User
+
+JS --> AS : Lista de Users  
+deactivate JS
+
+AS --> LC : [7] Retorna (true/false)  
+deactivate AS
+
+LC --> LV : [8] MostrarResultadoLogin(sucesso, mensagem)  
+activate LV
+deactivate LC
+
+LV --> MPC : [9] Se sucesso → MostrarMenu(user, role)  
+deactivate LV
+activate MPC
+
+'================================================================
+'  2. Menu Principal (fluxo geral)
+'================================================================
+MPC -> LV : [10] MostrarMenu(user, role)  
+activate LV
+LV --> MPC : [11] Retorna opçãoEscolhida  
+deactivate LV
+
+alt Escolheu “Gerir Sócios”
+    MPC -> SC : [12] Gerir()  
+    activate SC
+
+    SC -> GSV : [13] MostrarMenuSocio()  
+    activate GSV
+    GSV --> SC : [14] Retorna opçãoSocio (1:Listar, 2:Criar, 3:Editar, 4:Remover, 0:Voltar)  
+    deactivate GSV
+
+    alt Listar Sócios
+        SC -> SC : [15] Obter todos (SocioService.GetAll())  
+        SC -> GSV : [16] MostrarLista(IEnumerable<Socio>)  
+        activate GSV
+        GSV --> SC : [17] <Enter> para voltar  
+        deactivate GSV
+        SC --> MPC : [18] Retorna ao MenuPrincipal  
+        deactivate SC
+
+    else Criar Sócio
+        SC -> GSV : [19] PedirDadosSocio()  
+        activate GSV
+        GSV --> SC : [20] Retorna Socio{Nome,Email,DataInscricao}  
+        deactivate GSV
+
+        SC -> SC : [21] ExecutarComTratamento(() ⇒ SocioService.Add(novoSocio))  
+        activate SC
+        alt (Save OK)
+            SC -> GSV : [22] MostrarSucesso("Sócio adicionado com sucesso!")  
+            activate GSV
+            GSV --> SC : [23] <Enter> para voltar  
+            deactivate GSV
+
+        else (Sócio já existe)
+            SC -> GSV : [24] MostrarErro("Sócio já existe. Operação cancelada.")  
+            activate GSV
+            GSV --> SC : [25] <Enter> para voltar  
+            deactivate GSV
+
+        else (JsonFileFormatException)
+            SC -> EH : [26] Log(ex)  
+            SC --> GSV : [27] MostrarErro("JSON dos sócios está corrompido.")  
+            activate GSV
+            GSV --> SC : [28] <Enter> para voltar  
+            deactivate GSV
+
+        else (IOException)
+            SC -> EH : [29] Log(ex)  
+            SC --> GSV : [30] MostrarErro("Erro de I/O ao guardar sócio.")  
+            activate GSV
+            GSV --> SC : [31] <Enter> para voltar  
+            deactivate GSV
+
+        else (BusinessException / HorarioConflitoException, etc.)
+            SC -> EH : [32] Log(ex)  
+            SC --> GSV : [33] MostrarErro("Erro lógico: " + ex.Message)  
+            activate GSV
+            GSV --> SC : [34] <Enter> para voltar  
+            deactivate GSV
+        end
+
+        SC --> MPC : [35] Retorna ao MenuPrincipal  
+        deactivate SC
+    end
+
+end
+
+alt Escolheu “Gerir Aulas”
+    MPC -> AC : [36] Gerir()  
+    activate AC
+
+    AC -> GAV : [37] MostrarMenuAula()  
+    activate GAV
+    GAV --> AC : [38] Retorna opçãoAula (1:Listar,2:Criar,3:Editar,4:Remover,0:Voltar)  
+    deactivate GAV
+
+    alt Listar Aulas
+        AC -> AC : [39] Obter todos (AulaService.GetAll())  
+        AC -> GAV : [40] MostrarLista(IEnumerable<Aula>)  
+        activate GAV
+        GAV --> AC : [41] <Enter> para voltar  
+        deactivate GAV
+        AC --> MPC : [42] Retorna ao MenuPrincipal  
+        deactivate AC
+
+    else Criar Aula
+        AC -> GAV : [43] PedirDadosAula()  
+        activate GAV
+        GAV --> AC : [44] Retorna Aula{Nome,Horario}  
+        deactivate GAV
+
+        AC -> AC : [45] ExecutarComTratamento(() ⇒ AulaService.Add(novaAula))  
+        activate AC
+        alt (Save OK)
+            AC -> GAV : [46] MostrarSucesso("Aula adicionada com sucesso!")  
+            activate GAV
+            GAV --> AC : [47] <Enter> para voltar  
+            deactivate GAV
+
+        else (Conflito de Horário)
+            AC -> EH : [48] Log(ex)  
+            AC -> GAV : [49] MostrarErro("Conflito de horário. Operação cancelada.")  
+            activate GAV
+            GAV --> AC : [50] <Enter> para voltar  
+            deactivate GAV
+
+        else (JsonFileFormatException)
+            AC -> EH : [51] Log(ex)  
+            AC -> GAV : [52] MostrarErro("JSON de aulas está corrompido.")  
+            activate GAV
+            GAV --> AC : [53] <Enter> para voltar  
+            deactivate GAV
+
+        else (IOException)
+            AC -> EH : [54] Log(ex)  
+            AC -> GAV : [55] MostrarErro("Erro de I/O ao guardar aula.")  
+            activate GAV
+            GAV --> AC : [56] <Enter> para voltar  
+            deactivate GAV
+
+        else (BusinessException / HorarioConflitoException, etc.)
+            AC -> EH : [57] Log(ex)  
+            AC -> GAV : [58] MostrarErro("Erro lógico: " + ex.Message)  
+            activate GAV
+            GAV --> AC : [59] <Enter> para voltar  
+            deactivate GAV
+        end
+
+        AC --> MPC : [60] Retorna ao MenuPrincipal  
+        deactivate AC
+    end
+
+end
+
+alt Escolheu “Gerir Equipamentos”
+    MPC -> EC : [61] Gerir()  
+    activate EC
+
+    EC -> GEV : [62] MostrarMenuEquipamento()  
+    activate GEV
+    GEV --> EC : [63] Retorna opçãoEquip (1:Listar,2:Criar,3:Editar,4:Remover,0:Voltar)  
+    deactivate GEV
+
+    alt Listar Equipamentos
+        EC -> EC : [64] Obter todos (EquipamentoService.GetAll())  
+        EC -> GEV : [65] MostrarLista(IEnumerable<Equipamento>)  
+        activate GEV
+        GEV --> EC : [66] <Enter> para voltar  
+        deactivate GEV
+        EC --> MPC : [67] Retorna ao MenuPrincipal  
+        deactivate EC
+
+    else Criar Equipamento
+        EC -> GEV : [68] PedirDadosEquipamento()  
+        activate GEV
+        GEV --> EC : [69] Retorna Equipamento{Nome,Descricao}  
+        deactivate GEV
+
+        EC -> EC : [70] ExecutarComTratamento(() ⇒ EquipamentoService.Add(novoEquip))  
+        activate EC
+        alt (Save OK)
+            EC -> GEV : [71] MostrarSucesso("Equipamento adicionado com sucesso!")  
+            activate GEV
+            GEV --> EC : [72] <Enter> para voltar  
+            deactivate GEV
+
+        else (Equipamento já existe)
+            EC -> GEV : [73] MostrarErro("Equipamento já existe. Operação cancelada.")  
+            activate GEV
+            GEV --> EC : [74] <Enter> para voltar  
+            deactivate GEV
+
+        else (JsonFileFormatException)
+            EC -> EH : [75] Log(ex)  
+            EC -> GEV : [76] MostrarErro("JSON de equipamentos está corrompido.")  
+            activate GEV
+            GEV --> EC : [77] <Enter> para voltar  
+            deactivate GEV
+
+        else (IOException)
+            EC -> EH : [78] Log(ex)  
+            EC -> GEV : [79] MostrarErro("Erro de I/O ao guardar equipamento.")  
+            activate GEV
+            GEV --> EC : [80] <Enter> para voltar  
+            deactivate GEV
+
+        else (BusinessException, etc.)
+            EC -> EH : [81] Log(ex)  
+            EC -> GEV : [82] MostrarErro("Erro lógico: " + ex.Message)  
+            activate GEV
+            GEV --> EC : [83] <Enter> para voltar  
+            deactivate GEV
+        end
+
+        EC --> MPC : [84] Retorna ao MenuPrincipal  
+        deactivate EC
+    end
+
+end
+
+alt Escolheu “Gerir Utilizadores”
+    MPC -> UC : [85] Gerir()  
+    activate UC
+
+    UC -> GUV : [86] MostrarMenuUser()  
+    activate GUV
+    GUV --> UC : [87] Retorna opçãoUser (1:Listar,2:Criar,3:Editar,4:Remover,0:Voltar)  
+    deactivate GUV
+
+    alt Listar Utilizadores
+        UC -> UC : [88] Obter todos (UserService.GetAll())  
+        UC -> GUV : [89] MostrarLista(IEnumerable<User>)  
+        activate GUV
+        GUV --> UC : [90] <Enter> para voltar  
+        deactivate GUV
+        UC --> MPC : [91] Retorna ao MenuPrincipal  
+        deactivate UC
+
+    else Criar Utilizador
+        UC -> GUV : [92] PedirDadosUsuario()  
+        activate GUV
+        GUV --> UC : [93] Retorna User{Username,Password,Role}  
+        deactivate GUV
+
+        UC -> UC : [94] ExecutarComTratamento(() ⇒ UserService.Add(novoUser))  
+        activate UC
+        alt (Save OK)
+            UC -> GUV : [95] MostrarSucesso("Usuário adicionado com sucesso!")  
+            activate GUV
+            GUV --> UC : [96] <Enter> para voltar  
+            deactivate GUV
+
+        else (Usuário já existe)
+            UC -> GUV : [97] MostrarErro("Usuário já existe. Operação cancelada.")  
+            activate GUV
+            GUV --> UC : [98] <Enter> para voltar  
+            deactivate GUV
+
+        else (JsonFileFormatException)
+            UC -> EH : [99] Log(ex)  
+            UC -> GUV : [100] MostrarErro("JSON de usuários está corrompido.")  
+            activate GUV
+            GUV --> UC : [101] <Enter> para voltar  
+            deactivate GUV
+
+        else (IOException)
+            UC -> EH : [102] Log(ex)  
+            UC -> GUV : [103] MostrarErro("Erro de I/O ao guardar usuário.")  
+            activate GUV
+            GUV --> UC : [104] <Enter> para voltar  
+            deactivate GUV
+
+        else (BusinessException, etc.)
+            UC -> EH : [105] Log(ex)  
+            UC -> GUV : [106] MostrarErro("Erro lógico: " + ex.Message)  
+            activate GUV
+            GUV --> UC : [107] <Enter> para voltar  
+            deactivate GUV
+        end
+
+        UC --> MPC : [108] Retorna ao MenuPrincipal  
+        deactivate UC
+    end
+
+end
+
+alt Escolheu “Gerar Relatórios”
+    MPC -> RC : [109] Gerir()  
+    activate RC
+
+    RC -> GRV : [110] MostrarMenuRelatorio()  
+    activate GRV
+    GRV --> RC : [111] Retorna tipoRelatorio (1:Socios,2:Aulas,3:Equipamentos,0:Voltar)  
+    deactivate GRV
+
+    alt Relatório de Sócios
+        RC -> SC : [112] SocioService.GetAll()  
+        activate SC
+        SC --> RC : [113] IEnumerable<Socio> (lista)  
+        deactivate SC
+
+        RC -> RC : [114] ExecutarComTratamento(ObterDados→GerarRelatorio)  
+        RC -> PS : [115] CriarPDF_Socios(lista, currentUser)  
+        activate PS
+        PS --> RC : [116] Retorna byte[] pdfBytes  
+        deactivate PS
+
+        RC -> GRV : [117] MostrarPDF(pdfBytes)  
+        activate GRV
+        GRV --> RC : [118] <Enter> para voltar  
+        deactivate GRV
+
+        RC --> MPC : [119] Retorna ao MenuPrincipal  
+        deactivate RC
+
+    else Relatório de Aulas
+        RC -> AC : [120] AulaService.GetAll()  
+        activate AC
+        AC --> RC : [121] IEnumerable<Aula> (lista)  
+        deactivate AC
+
+        RC -> RC : [122] ExecutarComTratamento(ObterDados→GerarRelatorioAulas)  
+        RC -> PS : [123] CriarPDF_Aulas(lista, currentUser)  
+        activate PS
+        PS --> RC : [124] Retorna byte[] pdfBytes  
+        deactivate PS
+
+        RC -> GRV : [125] MostrarPDF(pdfBytes)  
+        activate GRV
+        GRV --> RC : [126] <Enter> para voltar  
+        deactivate GRV
+
+        RC --> MPC : [127] Retorna ao MenuPrincipal  
+        deactivate RC
+
+    else Relatório de Equipamentos
+        RC -> EC : [128] EquipamentoService.GetAll()  
+        activate EC
+        EC --> RC : [129] IEnumerable<Equipamento> (lista)  
+        deactivate EC
+
+        RC -> RC : [130] ExecutarComTratamento(ObterDados→GerarRelatorioEquipamentos)  
+        RC -> PS : [131] CriarPDF_Equipamentos(lista, currentUser)  
+        activate PS
+        PS --> RC : [132] Retorna byte[] pdfBytes  
+        deactivate PS
+
+        RC -> GRV : [133] MostrarPDF(pdfBytes)  
+        activate GRV
+        GRV --> RC : [134] <Enter> para voltar  
+        deactivate GRV
+
+        RC --> MPC : [135] Retorna ao MenuPrincipal  
+        deactivate RC
+    end
+end
+
+alt Escolheu “Sair”
+    MPC -> Sistema : [136] Verificar tarefas agendadas  
+    activate Sistema
+    Sistema --> MPC : [137] Retorna alertasPendentes  
+    deactivate Sistema
+
+    MPC -> Sistema : [138] Pedir encerramento  
+    MPC --> LV : [139] Encerrar interface  
+    deactivate MPC
+
+else Opção inválida
+    MPC -> MPV : [140] MostrarErro("Opção inválida!")  
+    activate MPV
+    MPV --> MPC : [141] <Enter> para voltar  
+    deactivate MPV
+end
+
+=== Fim do Fluxo (Programa encerrado) ===
+
+@enduml
