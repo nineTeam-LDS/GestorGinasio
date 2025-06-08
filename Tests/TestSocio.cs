@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using GestorGinasio.Tests;
 
 [TestFixture]
 public class TestSocio

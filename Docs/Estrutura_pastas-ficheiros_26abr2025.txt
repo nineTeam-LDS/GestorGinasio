@@ -1,0 +1,56 @@
+GestorGinasio          (diretório-raiz do projeto)
+│  GestorGinasio.sln
+│  Program.cs
+│  README.md
+│  .editorconfig
+│  .gitignore
+│
+├─Controller
+│  │  LoginController.cs
+│  │  MenuPrincipalController.cs      (antigo MenuPrincipal.cs)
+│  │  SocioController.cs
+│  └─ README.md
+│
+├─Model
+│  ├─Entities                         (domínio puro)
+│  │  │  Aula.cs
+│  │  │  Equipamento.cs
+│  │  │  Socio.cs
+│  │  │  User.cs
+│  │  └─ README.md
+│  └─Services                         (regras + acesso a dados)
+│     │  AulaService.cs
+│     │  AuthService.cs
+│     │  EquipamentoService.cs
+│     │  JsonService.cs
+│     │  ReportService.cs
+│     │  SocioService.cs
+│     └─ README.md
+│
+├─View
+│  ├─Assets
+│  │     logo.jpg
+│  └─Terminal                         (UI em consola – antigo “Console”)
+│        GerarRelatoriosView.cs
+│        GerirAulasView.cs
+│        GerirEquipamentosView.cs
+│        GerirSociosView.cs
+│        GerirUtilizadoresView.cs
+│        LoginView.cs
+│        MenuPrincipalView.cs
+│        SocioView.cs
+│        README.md
+│
+├─Data                                (ficheiros consumidos pelo Model)
+│     users.json
+│     README.md
+│
+├─Docs                                (diagramas, apontamentos)
+│     UML_K&P_04.txt                  (PlantUML)
+│     Estrutura_25abr2025_v2.docx
+│     BoasPraticasGit.pdf
+│     README.md
+│
+└─Tests
+      TestSocio.cs
+      README.md

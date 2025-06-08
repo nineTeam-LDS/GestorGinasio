@@ -1,12 +1,38 @@
 [
   {
+    "Id": 1,
     "Username": "daniel",
     "Password": "1234",
     "Role": "Admin"
   },
   {
+    "Id": 2,
     "Username": "jose",
     "Password": "abcd",
-    "Role": "Socio"
+    "Role": "Staff"
+  },
+  {
+    "Id": 3,
+    "Username": "cesar",
+    "Password": "1111",
+    "Role": "Admin"
+  },
+  {
+    "Id": 4,
+    "Username": "ana",
+    "Password": "2222",
+    "Role": "Prof"
+  },
+  {
+    "Id": 5,
+    "Username": "suzuky",
+    "Password": "0000",
+    "Role": "Prof"
+  },
+  {
+    "Id": 6,
+    "Username": "Xiripiti",
+    "Password": "0000",
+    "Role": "limpezas"
   }
 ]

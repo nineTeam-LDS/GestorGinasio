@@ -1,0 +1,30 @@
+[
+  {
+    "Id": 1,
+    "Nome": "zumba",
+    "Instrutor": "ana",
+    "Sala": "2",
+    "Horario": "12:00-13:00"
+  },
+  {
+    "Id": 2,
+    "Nome": "fitness",
+    "Instrutor": "pedro",
+    "Sala": "1",
+    "Horario": "16:00-17:00"
+  },
+  {
+    "Id": 3,
+    "Nome": "karate",
+    "Instrutor": "suzuky",
+    "Sala": "4",
+    "Horario": "08:00-9:45"
+  },
+  {
+    "Id": 4,
+    "Nome": "kendo",
+    "Instrutor": "Sakamoto",
+    "Sala": "7",
+    "Horario": "08:00-10:00"
+  }
+]
